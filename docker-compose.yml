@@ -1,0 +1,15 @@
+version: '2.1'
+services:
+
+  postgres:
+    restart: always
+    image: postgres:9.6.1
+    ports:
+     - "5432:5432"
+    volumes:
+      - ./database/init-db.sh:/docker-entrypoint-initdb.d/init-db.sh
+      - ./database/docker-postgresql.conf:/etc/postgresql.conf
+    environment:
+      - DB_USER="postgres"
+      - DB_PASS=
+    command: postgres -c config_file=/etc/postgresql.conf

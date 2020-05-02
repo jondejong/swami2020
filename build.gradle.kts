@@ -30,6 +30,12 @@ dependencies {
 
     // Use the Kotlin JUnit integration.
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit")
+
+    // HTTP4k
+
+    implementation("org.http4k:http4k-core:3.245.0")
+    implementation("org.http4k:http4k-server-jetty:3.245.0")
+    implementation("org.http4k:http4k-client-apache:3.245.0")
 }
 
 application {
