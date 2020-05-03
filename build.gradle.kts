@@ -8,8 +8,22 @@ plugins {
     // Apply the Kotlin JVM plugin to add support for Kotlin.
     id("org.jetbrains.kotlin.jvm") version "1.3.70"
 
+    // Flyway
+    id("org.flywaydb.flyway") version "5.2.4"
+
     // Apply the application plugin to add support for building a CLI application.
     application
+}
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+//        classpath "io.ratpack:ratpack-gradle:1.6.0"
+        classpath("com.github.jengelman.gradle.plugins:shadow:5.0.0")
+        classpath("org.postgresql:postgresql:42.2.1")
+    }
 }
 
 repositories {
@@ -32,10 +46,21 @@ dependencies {
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit")
 
     // HTTP4k
-
     implementation("org.http4k:http4k-core:3.245.0")
     implementation("org.http4k:http4k-server-jetty:3.245.0")
     implementation("org.http4k:http4k-client-apache:3.245.0")
+
+    // Flyway
+    implementation("org.flywaydb:flyway-core:6.4.1")
+
+    // Postresql
+    implementation("org.postgresql:postgresql:42.2.1")
+}
+
+flyway {
+    url = "jdbc:postgresql://127.0.0.1:5432/swami"
+    user = "swami_user"
+    password = "Password1"
 }
 
 application {
