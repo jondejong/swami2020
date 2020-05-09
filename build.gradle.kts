@@ -55,6 +55,9 @@ dependencies {
 
     // Postresql
     implementation("org.postgresql:postgresql:42.2.1")
+
+    // Jackson
+    implementation("org.http4k:http4k-format-jackson:3.245.1")
 }
 
 flyway {
@@ -66,4 +69,8 @@ flyway {
 application {
     // Define the main class for the application.
     mainClassName = "swami2020.AppKt"
+}
+
+tasks.named("run") {
+    dependsOn(":flywayMigrate")
 }
