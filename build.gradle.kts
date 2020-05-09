@@ -20,7 +20,6 @@ buildscript {
         jcenter()
     }
     dependencies {
-//        classpath "io.ratpack:ratpack-gradle:1.6.0"
         classpath("com.github.jengelman.gradle.plugins:shadow:5.0.0")
         classpath("org.postgresql:postgresql:42.2.1")
     }
@@ -35,6 +34,7 @@ repositories {
 dependencies {
     // Align versions of all Kotlin components
     implementation(platform("org.jetbrains.kotlin:kotlin-bom"))
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.6")
 
     // Use the Kotlin JDK 8 standard library.
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
@@ -58,6 +58,7 @@ dependencies {
 
     // Jackson
     implementation("org.http4k:http4k-format-jackson:3.245.1")
+
 }
 
 flyway {

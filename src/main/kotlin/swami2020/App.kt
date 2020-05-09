@@ -16,24 +16,25 @@ import org.http4k.server.Jetty
 import org.http4k.server.asServer
 import org.http4k.format.Jackson.auto
 import swami2020.dto.Team
+import swami2020.service.TeamService
+import java.util.*
 
 fun main(args: Array<String>) {
 
-//    val app = { request: Request -> Response(OK).body("Hello, ${request.query("name")}!") }
-
+    val teamService = TeamService()
     val teamLens = Body.auto<Team>().toLens()
 
     val teamHandler = { request: Request ->
         val id = request.path("id")
-        val iowa = Team(id.toString(), "Iowa", "Hawkeyes")
-        teamLens(iowa, Response(OK))
+        val team = teamService.fetch(UUID.randomUUID() )
+        teamLens(team, Response(OK))
     }
 
     val app = routes(
             "/hello" bind routes(
                     "/{name:.*}" bind Method.GET to { request: Request -> Response(OK).body("Hello, ${request.path("name")}!") }
             ),
-            "team" bind routes(
+            "teams" bind routes(
                 "/{id:.*}" bind Method.GET to teamHandler
             ),
             "/fail" bind Method.POST to { request: Request -> Response(INTERNAL_SERVER_ERROR) }

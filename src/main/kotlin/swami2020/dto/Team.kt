@@ -1,4 +1,16 @@
 package swami2020.dto
 
-data class Team(val id: String, val name: String, val nickName: String) {
+import java.util.*
+
+data class Team(val id: UUID, val name: String, val nickName: String) {
+
+    object Builder : DefaultableBuilder<Team>{
+        override fun default(): Team {
+            return default(UUID.randomUUID())
+        }
+
+        override fun default(id: UUID): Team {
+            return Team(id, "", "")
+        }
+    }
 }
