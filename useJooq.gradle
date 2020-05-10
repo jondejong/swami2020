@@ -1,0 +1,30 @@
+jooq {
+    version = '3.13.1'
+    edition = 'OSS'
+    swami(sourceSets.main) {
+        jdbc {
+            driver = 'org.postgresql.Driver'
+            url = 'jdbc:postgresql://localhost:5432/swami'
+            user = 'swami_user'
+            password = 'Password1!'
+        }
+        generator {
+            database {
+                includes = ".*"
+                excludes = ""
+                inputSchema = "public"
+            }
+            generate {
+                relations = true
+                deprecated = false
+                records = true
+                immutablePojos = true
+                fluentSetters = true
+            }
+            target {
+                packageName = 'com.jondejong.eswami.model'
+                directory = "${this.project.projectDir}/src/main/generated"
+            }
+        }
+    }
+}

@@ -15,15 +15,18 @@ open class Service {
             builder: B,
             id: UUID = UUID.randomUUID()
     ) : O {
-        var output = builder.default(id)
+        var output : O? = null
         runBlocking {
             GlobalScope.launch {
                 output = operation(input)
             }.join()
         }
-        if(output == null) {
-            throw ItemNotFoundException()
-        }
-        return output
+        if(output == null) {throw ItemNotFoundException()}
+
+        /*
+        This feels bad. The builder is only passed in to be able to gaurantee that
+        output will never be null. But it will never be null.
+         */
+        return output ?: builder.default(id)
     }
 }
