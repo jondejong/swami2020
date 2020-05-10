@@ -17,10 +17,9 @@ open class Service {
     ) : O {
         var output = builder.default(id)
         runBlocking {
-            val job = GlobalScope.launch {
+            GlobalScope.launch {
                 output = operation(input)
-            }
-            job.join()
+            }.join()
         }
         if(output == null) {
             throw ItemNotFoundException()
