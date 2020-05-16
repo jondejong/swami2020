@@ -1,10 +1,9 @@
 package swami2020.team
 
 import swami2020.response.Team
-import swami2020.service.Service
 import java.util.*
 
-class TeamService : Service() {
+class TeamService() {
 
     private lateinit var teamRepository : TeamRepository
 
@@ -17,6 +16,6 @@ class TeamService : Service() {
     }
 
     fun fetch(id: UUID) : Team {
-        return executeLoad(id, teamRepository::fetch, Team.ResponseBuilder, id)
+        return teamRepository.fetch(id)
     }
 }
