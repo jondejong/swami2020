@@ -72,6 +72,7 @@ dependencies {
     implementation("org.postgresql:postgresql:42.2.1")
     implementation("org.jooq:jooq:3.13.1")
     jooqRuntime("org.postgresql:postgresql:42.2.1")
+    implementation("com.zaxxer:HikariCP:3.4.5")
 
     // Jackson
     implementation("org.http4k:http4k-format-jackson:3.245.1")
@@ -96,9 +97,9 @@ idea {
 }
 
 tasks.named("run") {
-    dependsOn(":flywayMigrate")
+    dependsOn(":generateSwamiJooqSchemaSource")
 }
 
-tasks.named("flywayMigrate") {
-    dependsOn("generateSwamiJooqSchemaSource")
+tasks.named("generateSwamiJooqSchemaSource") {
+    dependsOn("flywayMigrate")
 }

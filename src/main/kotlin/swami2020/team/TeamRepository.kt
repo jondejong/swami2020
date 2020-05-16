@@ -1,34 +1,27 @@
-package swami2020.repository
+package swami2020.team
 
 import com.jondejong.eswami.model.tables.Team.TEAM
 import org.jooq.DSLContext
+import org.jooq.SQLDialect
 import org.jooq.impl.DSL
-import swami2020.dto.Team
 import swami2020.exception.ItemNotFoundException
+import swami2020.response.Team
 import java.util.*
+import javax.sql.DataSource
 
-class TeamRepository {
+class TeamRepository() {
 
-//    var context : DSLContext
+     private lateinit var context : DSLContext
 
-    private val context : DSLContext = DSL.using(
-            "jdbc:postgresql://localhost:5432/swami",
-            "swami_user",
-            "Password1"
-    )
-
-    companion object Builder {
-        fun build() : TeamRepository {
-            return TeamRepository()
-        }
+    fun setUp(dataSource: DataSource) {
+        context = DSL.using(dataSource, SQLDialect.POSTGRES)
     }
 
     fun list() : Collection<Team> {
         context.use { context ->
-            val teams = context.select(TEAM.ID, TEAM.NAME, TEAM.NICK_NAME)
+            return context.select(TEAM.ID, TEAM.NAME, TEAM.NICK_NAME)
                     .from(TEAM)
                     .fetchInto(Team::class.java)
-            return teams
         }
     }
 

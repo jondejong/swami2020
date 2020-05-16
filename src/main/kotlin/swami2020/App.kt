@@ -3,51 +3,47 @@
  */
 package swami2020
 
-import org.http4k.core.Body
 import org.http4k.core.Method
 import org.http4k.core.Request
 import org.http4k.core.Response
-import org.http4k.core.Status.Companion.INTERNAL_SERVER_ERROR
 import org.http4k.core.Status.Companion.OK
 import org.http4k.routing.bind
 import org.http4k.routing.path
 import org.http4k.routing.routes
 import org.http4k.server.Jetty
 import org.http4k.server.asServer
-import org.http4k.format.Jackson.auto
-import swami2020.dto.Team
-import swami2020.service.TeamService
 import java.util.*
 
-fun main(args: Array<String>) {
+class App(appFactory: AppFactory) {
+    private val teamRoutes = appFactory.teamRoutes
 
-    val teamService = TeamService()
-    val teamLens = Body.auto<Team>().toLens()
-    val teamListLens = Body.auto<Collection<Team>>().toLens()
-
-    val teamFetchHandler = { request: Request ->
-        val id = request.path("id")
-        val team = teamService.fetch(UUID.fromString(id))
-        teamLens(team, Response(OK))
-    }
-
-    var teamListHandler = { request: Request ->
-        teamListLens(teamService.list(), Response(OK))
-    }
-
-    var teamRoutes = routes(
-            "/{id:.*}" bind Method.GET to teamFetchHandler,
-            "/" bind Method.GET to teamListHandler
-    )
-
-    val app = routes(
+    private val app = routes(
             "/hello" bind routes(
                     "/{name:.*}" bind Method.GET to { request: Request -> Response(OK).body("Hello, ${request.path("name")}!") }
             ),
-            "teams" bind teamRoutes,
-            "/fail" bind Method.POST to { request: Request -> Response(INTERNAL_SERVER_ERROR) }
+            "teams" bind teamRoutes.routes
     )
 
-    val jettyServer = app.asServer(Jetty(9000)).start()
+    private val jettyServer = app.asServer(Jetty(9000))
 
+    fun start() {
+        jettyServer.start()
+    }
+
+    fun stop() {
+        jettyServer.stop()
+    }
+}
+
+fun main(args: Array<String>) {
+    val databaseProperties = Properties()
+    databaseProperties.setProperty("jdbcUrl", "jdbc:postgresql://localhost:5432/swami")
+    databaseProperties.setProperty("username", "swami_user")
+    databaseProperties.setProperty("password", "Password_1")
+    val swamiProperties = SwamiProperties()
+    swamiProperties.database = databaseProperties
+    val appFactory = AppFactory(swamiProperties)
+    val app = App(appFactory)
+    app.start()
+    println("Server started. Listining on port 9000")
 }

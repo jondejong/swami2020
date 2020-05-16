@@ -1,8 +1,8 @@
-package swami2020.dto
+package swami2020.response
 
 import java.util.*
 
-interface DefaultableBuilder<T> {
+interface DefaultableResponseBuilder<T> {
     fun default() : T
     fun default(id: UUID) : T
 }
