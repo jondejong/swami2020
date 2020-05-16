@@ -1,7 +1,7 @@
 package swami2020.team
 
-import com.jondejong.eswami.model.tables.Conference.CONFERENCE
-import com.jondejong.eswami.model.tables.Team.TEAM
+import com.jondejong.swami.model.tables.Conference.CONFERENCE
+import com.jondejong.swami.model.tables.Team.TEAM
 import org.jooq.DSLContext
 import org.jooq.SQLDialect
 import org.jooq.impl.DSL

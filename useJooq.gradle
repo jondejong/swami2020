@@ -22,7 +22,7 @@ jooq {
                 fluentSetters = true
             }
             target {
-                packageName = 'com.jondejong.eswami.model'
+                packageName = 'com.jondejong.swami.model'
                 directory = "${this.project.projectDir}/src/main/generated"
             }
         }
