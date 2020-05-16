@@ -12,6 +12,7 @@ import java.util.*
  * TODO: Replace with properties loading
  */
 class AppFactory(properties: SwamiProperties) {
+    val port = Integer.parseInt(properties.server.getProperty("port"))
 
     // Construct
     val hikariConfig = HikariConfig(properties.database)

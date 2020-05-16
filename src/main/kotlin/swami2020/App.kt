@@ -15,6 +15,7 @@ import org.http4k.server.asServer
 import java.util.*
 
 class App(appFactory: AppFactory) {
+    private val port = appFactory.port
     private val teamRoutes = appFactory.teamRoutes
 
     private val app = routes(
@@ -24,10 +25,11 @@ class App(appFactory: AppFactory) {
             "teams" bind teamRoutes.routes
     )
 
-    private val jettyServer = app.asServer(Jetty(9000))
+    private val jettyServer = app.asServer(Jetty(port))
 
     fun start() {
         jettyServer.start()
+        println("Server started. Listening on port $port")
     }
 
     fun stop() {
@@ -36,14 +38,21 @@ class App(appFactory: AppFactory) {
 }
 
 fun main(args: Array<String>) {
+    // Database
     val databaseProperties = Properties()
     databaseProperties.setProperty("jdbcUrl", "jdbc:postgresql://localhost:5432/swami")
     databaseProperties.setProperty("username", "swami_user")
     databaseProperties.setProperty("password", "Password_1")
+
+    // Server
+    val serverProperties = Properties()
+    serverProperties.setProperty("port", "9000")
+
     val swamiProperties = SwamiProperties()
     swamiProperties.database = databaseProperties
+    swamiProperties.server = serverProperties
+
     val appFactory = AppFactory(swamiProperties)
     val app = App(appFactory)
     app.start()
-    println("Server started. Listining on port 9000")
 }

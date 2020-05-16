@@ -61,9 +61,8 @@ dependencies {
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit")
 
     // HTTP4k
-    implementation("org.http4k:http4k-core:3.245.0")
-    implementation("org.http4k:http4k-server-jetty:3.245.0")
-    implementation("org.http4k:http4k-client-apache:3.245.0")
+    implementation("org.http4k:http4k-core:3.247.0")
+    implementation("org.http4k:http4k-server-jetty:3.247.0")
 
     // Flyway
     implementation("org.flywaydb:flyway-core:6.4.1")
@@ -75,7 +74,9 @@ dependencies {
     implementation("com.zaxxer:HikariCP:3.4.5")
 
     // Jackson
-    implementation("org.http4k:http4k-format-jackson:3.245.1")
+    implementation("org.http4k:http4k-format-jackson:3.247.0")
+
+    testImplementation("org.http4k:http4k-client-okhttp:3.247.0")
 
 }
 

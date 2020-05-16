@@ -4,4 +4,5 @@ import java.util.*
 
 class SwamiProperties {
     var database = Properties()
+    var server = Properties()
 }

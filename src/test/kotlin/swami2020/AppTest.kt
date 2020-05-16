@@ -3,12 +3,45 @@
  */
 package swami2020
 
-import kotlin.test.Test
-import kotlin.test.assertNotNull
+import org.http4k.client.OkHttp
+import org.http4k.core.Method
+import org.http4k.core.Request
+import org.http4k.core.Status
+import java.util.*
+import kotlin.test.*
 
 class AppTest {
-    @Test fun testAppHasAGreeting() {
-//        val classUnderTest = App()
-        assertNotNull("Test stuff")
+    private val port = 9000
+    private val client = OkHttp()
+
+    lateinit var app : App
+
+    @BeforeTest fun setup() {
+        val databaseProperties = Properties()
+        databaseProperties.setProperty("jdbcUrl", "jdbc:postgresql://localhost:5432/swami")
+        databaseProperties.setProperty("username", "swami_user")
+        databaseProperties.setProperty("password", "Password_1")
+
+        // Server
+        val serverProperties = Properties()
+        serverProperties.setProperty("port", "$port")
+
+        val swamiProperties = SwamiProperties()
+        swamiProperties.database = databaseProperties
+        swamiProperties.server = serverProperties
+        val appFactory = AppFactory(swamiProperties)
+        app = App(appFactory)
+        app.start()
+    }
+
+    @AfterTest fun teardown() {
+        app.stop()
+    }
+
+    @Test fun testHealth() {
+        val resp = client(Request(Method.GET, "http://localhost:$port/hello/jonny"))
+        assertNotNull(resp)
+        assertEquals(Status.OK, resp.status)
+        assertEquals("Hello, jonny!", resp.bodyString())
     }
 }
