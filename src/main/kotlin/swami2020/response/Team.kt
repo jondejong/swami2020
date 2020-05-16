@@ -1,11 +1,10 @@
-package swami2020.dto
+package swami2020.response
 
-import com.jondejong.eswami.model.tables.Conference
 import java.util.*
 
 data class Team(val id: UUID, val name: String, val nickName: String) {
 
-    object Builder : DefaultableBuilder<Team>{
+    object ResponseBuilder : DefaultableResponseBuilder<Team> {
         override fun default(): Team {
             return default(UUID.randomUUID())
         }

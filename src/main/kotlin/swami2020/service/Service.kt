@@ -3,13 +3,16 @@ package swami2020.service
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import swami2020.dto.DefaultableBuilder
+import swami2020.response.DefaultableResponseBuilder
 import swami2020.exception.ItemNotFoundException
 import java.util.*
 
 open class Service {
 
-    fun <I, O, B : DefaultableBuilder<O>> executeLoad (
+    /*
+    Overcomplicated attempt at making generic non-bocking I/O
+     */
+    fun <I, O, B : DefaultableResponseBuilder<O>> executeLoad (
             input: I,
             operation: (I) -> O,
             builder: B,
