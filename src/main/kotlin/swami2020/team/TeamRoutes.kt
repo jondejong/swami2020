@@ -18,9 +18,12 @@ class TeamRoutes {
     }
 
     private val teamFetchHandler = { request: Request ->
-        val id = request.path("id")
-        val team = teamService.fetch(UUID.fromString(id))
-        teamLens(team, Response(Status.OK))
+        teamLens(
+                teamService.fetch(UUID.fromString(
+                        request.path("id")
+                )),
+                Response(Status.OK)
+        )
     }
 
     private val teamListHandler = { _: Request ->
