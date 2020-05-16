@@ -23,7 +23,8 @@ class AppTest {
     private val testTeam = Team(
             UUID.fromString("9579145e-1946-4f42-9c47-42fefb4eb8e6"),
             "Iowa",
-            "Hawkeyes"
+            "Hawkeyes",
+            "Big Ten"
     )
 
     lateinit var app : App
@@ -69,6 +70,7 @@ class AppTest {
             assertNotNull(team.id)
             assertNotNull(team.name)
             assertNotNull(team.nickName)
+            assertNotNull(team.conference)
         }
     }
 
