@@ -23,20 +23,28 @@ fun main(args: Array<String>) {
 
     val teamService = TeamService()
     val teamLens = Body.auto<Team>().toLens()
+    val teamListLens = Body.auto<Collection<Team>>().toLens()
 
-    val teamHandler = { request: Request ->
+    val teamFetchHandler = { request: Request ->
         val id = request.path("id")
-        val team = teamService.fetch(UUID.randomUUID() )
+        val team = teamService.fetch(UUID.fromString(id))
         teamLens(team, Response(OK))
     }
+
+    var teamListHandler = { request: Request ->
+        teamListLens(teamService.list(), Response(OK))
+    }
+
+    var teamRoutes = routes(
+            "/{id:.*}" bind Method.GET to teamFetchHandler,
+            "/" bind Method.GET to teamListHandler
+    )
 
     val app = routes(
             "/hello" bind routes(
                     "/{name:.*}" bind Method.GET to { request: Request -> Response(OK).body("Hello, ${request.path("name")}!") }
             ),
-            "teams" bind routes(
-                "/{id:.*}" bind Method.GET to teamHandler
-            ),
+            "teams" bind teamRoutes,
             "/fail" bind Method.POST to { request: Request -> Response(INTERNAL_SERVER_ERROR) }
     )
 

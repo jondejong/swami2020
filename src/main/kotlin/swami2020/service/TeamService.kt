@@ -8,6 +8,10 @@ class TeamService : Service() {
 
     private val teamRepository = TeamRepository.Builder.build()
 
+    fun list() : Collection<Team> {
+        return teamRepository.list()
+    }
+
     fun fetch(id: UUID) : Team {
         return executeLoad(id, teamRepository::fetch, Team.Builder, id)
     }

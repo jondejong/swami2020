@@ -1,5 +1,6 @@
 package swami2020.dto
 
+import com.jondejong.eswami.model.tables.Conference
 import java.util.*
 
 data class Team(val id: UUID, val name: String, val nickName: String) {
