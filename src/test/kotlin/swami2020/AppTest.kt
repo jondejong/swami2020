@@ -4,15 +4,27 @@
 package swami2020
 
 import org.http4k.client.OkHttp
+import org.http4k.core.Body
 import org.http4k.core.Method
 import org.http4k.core.Request
 import org.http4k.core.Status
+import org.http4k.format.Jackson.auto
+import swami2020.response.Team
 import java.util.*
 import kotlin.test.*
 
 class AppTest {
     private val port = 9000
     private val client = OkHttp()
+
+    private val teamLens = Body.auto<Team>().toLens()
+    private val teamListLens = Body.auto<Collection<Team>>().toLens()
+
+    private val testTeam = Team(
+            UUID.fromString("9579145e-1946-4f42-9c47-42fefb4eb8e6"),
+            "Iowa",
+            "Hawkeyes"
+    )
 
     lateinit var app : App
 
@@ -43,5 +55,29 @@ class AppTest {
         assertNotNull(resp)
         assertEquals(Status.OK, resp.status)
         assertEquals("Hello, jonny!", resp.bodyString())
+    }
+
+    @Test fun testTeamList() {
+        val resp = client(Request(Method.GET, "http://localhost:$port/teams"))
+        assertNotNull(resp)
+        assertEquals(Status.OK, resp.status)
+
+        val teams = teamListLens(resp)
+
+        assertEquals(50, teams?.size)
+        teams.forEach { team ->
+            assertNotNull(team.id)
+            assertNotNull(team.name)
+            assertNotNull(team.nickName)
+        }
+    }
+
+    @Test fun testTeamFetch() {
+        val resp = client(Request(Method.GET, "http://localhost:$port/teams/${testTeam.id.toString()}"))
+        assertNotNull(resp)
+        assertEquals(Status.OK, resp.status)
+
+        val team = teamLens(resp)
+        assertEquals(testTeam, team)
     }
 }
