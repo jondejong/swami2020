@@ -11,6 +11,9 @@ import org.http4k.core.Status
 import org.http4k.format.Jackson.auto
 import org.junit.AfterClass
 import org.junit.BeforeClass
+import swami2020.properties.DatabaseProperties
+import swami2020.properties.ServerProperties
+import swami2020.properties.SwamiProperties
 import swami2020.response.Team
 import java.util.*
 import kotlin.test.*
@@ -18,25 +21,22 @@ import kotlin.test.*
 class AppTest {
 
     companion object {
-
         const val port = 9000
-
-        // Application under test
         lateinit var app: App
 
+        // Application under test
         @BeforeClass @JvmStatic fun setup() {
-            val databaseProperties = Properties()
-            databaseProperties.setProperty("jdbcUrl", "jdbc:postgresql://localhost:5432/swami")
-            databaseProperties.setProperty("username", "swami_user")
-            databaseProperties.setProperty("password", "Password_1")
 
-            // Server
-            val serverProperties = Properties()
-            serverProperties.setProperty("port", "$port")
+            //TODO: Load properties from YAML
+            val swamiProperties = SwamiProperties(
+                    ServerProperties(port),
+                    DatabaseProperties(
+                            "jdbc:postgresql://localhost:5432/swami",
+                            "swami_user",
+                            "Password_1"
+                    )
+            )
 
-            val swamiProperties = SwamiProperties()
-            swamiProperties.database = databaseProperties
-            swamiProperties.server = serverProperties
             val appFactory = AppFactory(swamiProperties)
             app = App(appFactory)
             app.start()
@@ -63,8 +63,6 @@ class AppTest {
             "Hawkeyes",
             "Big Ten"
     )
-
-    lateinit var app : App
 
     @Test fun testHealth() {
         val resp = client(Request(Method.GET, "$urlBase/hello/jonny"))

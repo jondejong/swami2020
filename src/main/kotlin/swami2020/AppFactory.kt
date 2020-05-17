@@ -1,28 +1,24 @@
 package swami2020
 
-import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
+import swami2020.database.DatabaseConfig
+import swami2020.properties.SwamiProperties
 import swami2020.team.TeamRepository
 import swami2020.team.TeamRoutes
 import swami2020.team.TeamService
-import java.util.*
 
-/**
- * TODO: Replace with DI? (guice?)
- * TODO: Replace with properties loading
- */
 class AppFactory(properties: SwamiProperties) {
-    val port = Integer.parseInt(properties.server.getProperty("port"))
+    val port = properties.serverProperties.port
 
     // Construct
-    val hikariConfig = HikariConfig(properties.database)
+    val databaseConfig = DatabaseConfig.build(properties.databaseProperties)
     val teamRepository = TeamRepository()
     val teamService = TeamService()
     val teamRoutes = TeamRoutes()
 
     //Set Up
     init {
-        teamRepository.setUp(HikariDataSource(hikariConfig))
+        teamRepository.setUp(HikariDataSource(databaseConfig))
         teamService.setUp(teamRepository)
         teamRoutes.setUp(teamService)
     }

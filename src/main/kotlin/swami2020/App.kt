@@ -3,16 +3,20 @@
  */
 package swami2020
 
-import org.http4k.core.*
+import org.http4k.core.Method
+import org.http4k.core.Request
+import org.http4k.core.Response
 import org.http4k.core.Status.Companion.OK
+import org.http4k.core.then
 import org.http4k.routing.bind
 import org.http4k.routing.path
 import org.http4k.routing.routes
 import org.http4k.server.Jetty
 import org.http4k.server.asServer
-import swami2020.exception.ItemNotFoundException
 import swami2020.filters.ErrorHandlerFilter
-import java.util.*
+import swami2020.properties.DatabaseProperties
+import swami2020.properties.ServerProperties
+import swami2020.properties.SwamiProperties
 
 class App(appFactory: AppFactory) {
     private val port = appFactory.port
@@ -31,7 +35,7 @@ class App(appFactory: AppFactory) {
             ErrorHandlerFilter.errorFilter
                     .then(handlers)
 
-    private val jettyServer = app.asServer(Jetty(port))
+    private val jettyServer = app.asServer(Jetty(port.toInt()))
 
     fun start() {
         jettyServer.start()
@@ -44,19 +48,15 @@ class App(appFactory: AppFactory) {
 }
 
 fun main(args: Array<String>) {
-    // Database
-    val databaseProperties = Properties()
-    databaseProperties.setProperty("jdbcUrl", "jdbc:postgresql://localhost:5432/swami")
-    databaseProperties.setProperty("username", "swami_user")
-    databaseProperties.setProperty("password", "Password_1")
-
-    // Server
-    val serverProperties = Properties()
-    serverProperties.setProperty("port", "9000")
-
-    val swamiProperties = SwamiProperties()
-    swamiProperties.database = databaseProperties
-    swamiProperties.server = serverProperties
+    //TODO: Load properties from YAML
+    val swamiProperties = SwamiProperties(
+            ServerProperties(9000),
+            DatabaseProperties(
+                    "jdbc:postgresql://localhost:5432/swami",
+                    "swami_user",
+                    "Password_1"
+            )
+    )
 
     val appFactory = AppFactory(swamiProperties)
     val app = App(appFactory)
