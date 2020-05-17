@@ -3,27 +3,33 @@
  */
 package swami2020
 
-import org.http4k.core.Method
-import org.http4k.core.Request
-import org.http4k.core.Response
+import org.http4k.core.*
 import org.http4k.core.Status.Companion.OK
 import org.http4k.routing.bind
 import org.http4k.routing.path
 import org.http4k.routing.routes
 import org.http4k.server.Jetty
 import org.http4k.server.asServer
+import swami2020.exception.ItemNotFoundException
+import swami2020.filters.ErrorHandlerFilter
 import java.util.*
 
 class App(appFactory: AppFactory) {
     private val port = appFactory.port
     private val teamRoutes = appFactory.teamRoutes
 
-    private val app = routes(
+    // Compose the routes
+    private val handlers = routes(
             "/hello" bind routes(
                     "/{name:.*}" bind Method.GET to { request: Request -> Response(OK).body("Hello, ${request.path("name")}!") }
             ),
             "teams" bind teamRoutes.routes
     )
+
+    // Compose all handlers
+    private val app =
+            ErrorHandlerFilter.errorFilter
+            .then(handlers)
 
     private val jettyServer = app.asServer(Jetty(port))
 
