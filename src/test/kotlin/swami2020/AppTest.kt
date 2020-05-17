@@ -80,7 +80,7 @@ class AppTest {
 
         val teams = teamListLens(resp)
 
-        assertEquals(50, teams?.size)
+        assertEquals(50, teams.size)
         teams.forEach { team ->
             assertNotNull(team.id)
             assertNotNull(team.name)

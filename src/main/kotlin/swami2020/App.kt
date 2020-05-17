@@ -29,7 +29,7 @@ class App(appFactory: AppFactory) {
     // Compose all handlers
     private val app =
             ErrorHandlerFilter.errorFilter
-            .then(handlers)
+                    .then(handlers)
 
     private val jettyServer = app.asServer(Jetty(port))
 
