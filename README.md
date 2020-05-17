@@ -37,4 +37,4 @@ The application exposes two `GET` endpoints:
 
 `http://localhost:9000/teams` will list teams
 
-`http://localhost:9000/teams/<uuid>` will return the specific team tied identified by the UUID. (TODO: Throw a 404 if not found) 
+`http://localhost:9000/teams/<uuid>` will return the specific team tied identified by the UUID, and throw a 404 if not found) 
