@@ -9,16 +9,53 @@ import org.http4k.core.Method
 import org.http4k.core.Request
 import org.http4k.core.Status
 import org.http4k.format.Jackson.auto
+import org.junit.AfterClass
+import org.junit.BeforeClass
 import swami2020.response.Team
 import java.util.*
 import kotlin.test.*
 
 class AppTest {
-    private val port = 9000
+
+    companion object {
+
+        const val port = 9000
+
+        // Application under test
+        lateinit var app: App
+
+        @BeforeClass @JvmStatic fun setup() {
+            val databaseProperties = Properties()
+            databaseProperties.setProperty("jdbcUrl", "jdbc:postgresql://localhost:5432/swami")
+            databaseProperties.setProperty("username", "swami_user")
+            databaseProperties.setProperty("password", "Password_1")
+
+            // Server
+            val serverProperties = Properties()
+            serverProperties.setProperty("port", "$port")
+
+            val swamiProperties = SwamiProperties()
+            swamiProperties.database = databaseProperties
+            swamiProperties.server = serverProperties
+            val appFactory = AppFactory(swamiProperties)
+            app = App(appFactory)
+            app.start()
+        }
+
+        @AfterClass @JvmStatic fun teardown() {
+            app.stop()
+        }
+    }
+
     private val client = OkHttp()
 
     private val teamLens = Body.auto<Team>().toLens()
     private val teamListLens = Body.auto<Collection<Team>>().toLens()
+
+    private val server = "http://localhost"
+    private val teamsPath = "teams"
+    private val urlBase = "$server:$port"
+    private val teamsUrl = "$urlBase/$teamsPath"
 
     private val testTeam = Team(
             UUID.fromString("9579145e-1946-4f42-9c47-42fefb4eb8e6"),
@@ -29,37 +66,15 @@ class AppTest {
 
     lateinit var app : App
 
-    @BeforeTest fun setup() {
-        val databaseProperties = Properties()
-        databaseProperties.setProperty("jdbcUrl", "jdbc:postgresql://localhost:5432/swami")
-        databaseProperties.setProperty("username", "swami_user")
-        databaseProperties.setProperty("password", "Password_1")
-
-        // Server
-        val serverProperties = Properties()
-        serverProperties.setProperty("port", "$port")
-
-        val swamiProperties = SwamiProperties()
-        swamiProperties.database = databaseProperties
-        swamiProperties.server = serverProperties
-        val appFactory = AppFactory(swamiProperties)
-        app = App(appFactory)
-        app.start()
-    }
-
-    @AfterTest fun teardown() {
-        app.stop()
-    }
-
     @Test fun testHealth() {
-        val resp = client(Request(Method.GET, "http://localhost:$port/hello/jonny"))
+        val resp = client(Request(Method.GET, "$urlBase/hello/jonny"))
         assertNotNull(resp)
         assertEquals(Status.OK, resp.status)
         assertEquals("Hello, jonny!", resp.bodyString())
     }
 
     @Test fun testTeamList() {
-        val resp = client(Request(Method.GET, "http://localhost:$port/teams"))
+        val resp = client(Request(Method.GET, teamsUrl))
         assertNotNull(resp)
         assertEquals(Status.OK, resp.status)
 
@@ -75,11 +90,26 @@ class AppTest {
     }
 
     @Test fun testTeamFetch() {
-        val resp = client(Request(Method.GET, "http://localhost:$port/teams/${testTeam.id.toString()}"))
+        val resp = client(Request(Method.GET, "$teamsUrl/${testTeam.id.toString()}"))
         assertNotNull(resp)
         assertEquals(Status.OK, resp.status)
 
         val team = teamLens(resp)
         assertEquals(testTeam, team)
+    }
+
+    @Test fun testTeamNotFound() {
+        val resp = client(Request(Method.GET, "$teamsUrl/${UUID.randomUUID()}"))
+        assertEquals(Status.NOT_FOUND, resp.status)
+    }
+
+    @Test fun testInvalidTeamIdentifier() {
+        val resp = client(Request(Method.GET, "$teamsUrl/notUUID"))
+        assertEquals(Status.BAD_REQUEST, resp.status)
+    }
+
+    @Test fun testBadURLNotFound() {
+        val resp = client(Request(Method.GET, "$urlBase/things"))
+        assertEquals(Status.NOT_FOUND, resp.status)
     }
 }
