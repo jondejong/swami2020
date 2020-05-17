@@ -31,7 +31,7 @@ class TeamRoutes {
     }
 
     val routes = org.http4k.routing.routes(
-                "/{id:.*}" bind Method.GET to teamFetchHandler,
-                "/" bind Method.GET to teamListHandler
-        )
+            "/{id:.*}" bind Method.GET to teamFetchHandler,
+            "/" bind Method.GET to teamListHandler
+    )
 }

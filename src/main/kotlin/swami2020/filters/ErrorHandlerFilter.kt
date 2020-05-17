@@ -10,11 +10,11 @@ class ErrorHandlerFilter {
             { request: Request ->
                 try {
                     response = next(request)
-                } catch(e: ItemNotFoundException) {
+                } catch (e: ItemNotFoundException) {
                     response = Response(Status.NOT_FOUND)
-                } catch(e: IllegalArgumentException) {
+                } catch (e: IllegalArgumentException) {
                     response = Response(Status.BAD_REQUEST)
-                } catch(t: Throwable) {
+                } catch (t: Throwable) {
                     response = Response(Status.INTERNAL_SERVER_ERROR)
                 }
                 response

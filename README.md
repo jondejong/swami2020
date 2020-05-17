@@ -9,7 +9,7 @@ Docker installed on your local. From the project root folder, simply run:
 
 `docker-compose up`
 
-When you are done play, be sure to run?
+When you are done play, be sure to run:
 
 `docker-compose down`
 
@@ -31,7 +31,7 @@ The tests are located in:
 ## Running The Application
 Currently, the application has only been verified running with Gradle:
 
-`./gradlew run
+`./gradlew run`
 
 The application exposes two `GET` endpoints:
 

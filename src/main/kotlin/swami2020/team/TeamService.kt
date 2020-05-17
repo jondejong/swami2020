@@ -5,17 +5,17 @@ import java.util.*
 
 class TeamService() {
 
-    private lateinit var teamRepository : TeamRepository
+    private lateinit var teamRepository: TeamRepository
 
     fun setUp(teamRepository: TeamRepository) {
         this.teamRepository = teamRepository
     }
 
-    fun list() : Collection<Team> {
+    fun list(): Collection<Team> {
         return teamRepository.list()
     }
 
-    fun fetch(id: UUID) : Team {
+    fun fetch(id: UUID): Team {
         return teamRepository.fetch(id)
     }
 }
