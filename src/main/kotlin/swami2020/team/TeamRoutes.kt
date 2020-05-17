@@ -4,17 +4,19 @@ import org.http4k.core.*
 import org.http4k.format.Jackson.auto
 import org.http4k.routing.bind
 import org.http4k.routing.path
+import swami2020.app.AppFactory
+import swami2020.app.SwamiConfigurable
 import swami2020.response.Team
 import java.util.*
 
-class TeamRoutes {
+class TeamRoutes : SwamiConfigurable {
 
     private lateinit var teamService: TeamService
     private val teamLens = Body.auto<Team>().toLens()
     private val teamListLens = Body.auto<Collection<Team>>().toLens()
 
-    fun setUp(teamService: TeamService) {
-        this.teamService = teamService
+    override fun setUp(factory: AppFactory) {
+        this.teamService = factory.teamService
     }
 
     private val teamFetchHandler = { request: Request ->

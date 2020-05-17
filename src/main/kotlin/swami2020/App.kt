@@ -13,6 +13,7 @@ import org.http4k.routing.path
 import org.http4k.routing.routes
 import org.http4k.server.Jetty
 import org.http4k.server.asServer
+import swami2020.app.AppFactory
 import swami2020.filters.ErrorHandlerFilter
 import swami2020.properties.DatabaseProperties
 import swami2020.properties.ServerProperties
@@ -20,14 +21,14 @@ import swami2020.properties.SwamiProperties
 
 class App(appFactory: AppFactory) {
     private val port = appFactory.port
-    private val teamRoutes = appFactory.teamRoutes
 
     // Compose the routes
     private val handlers = routes(
             "/hello" bind routes(
                     "/{name:.*}" bind Method.GET to { request: Request -> Response(OK).body("Hello, ${request.path("name")}!") }
             ),
-            "teams" bind teamRoutes.routes
+            "teams" bind appFactory.teamRoutes.routes,
+            "users" bind appFactory.userRoutes.routes
     )
 
     // Compose all handlers
@@ -35,7 +36,7 @@ class App(appFactory: AppFactory) {
             ErrorHandlerFilter.errorFilter
                     .then(handlers)
 
-    private val jettyServer = app.asServer(Jetty(port.toInt()))
+    private val jettyServer = app.asServer(Jetty(port))
 
     fun start() {
         jettyServer.start()
