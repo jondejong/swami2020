@@ -1,4 +1,4 @@
-#Swami 2020
+# Swami 2020
 This application will become the foundation for a football pick 'em game amongst friends.
 
 This tag is meant a demo of an API on  http4k, HikariCP, and Jooq.
