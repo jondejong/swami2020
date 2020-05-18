@@ -1,4 +1,4 @@
-package swami2020.response
+package swami2020.api.response
 
 import com.jondejong.swami.model.tables.pojos.SwamiUser
 import java.util.*

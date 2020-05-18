@@ -4,19 +4,17 @@
 package swami2020
 
 import org.http4k.client.OkHttp
-import org.http4k.core.Body
-import org.http4k.core.Method
-import org.http4k.core.Request
-import org.http4k.core.Status
+import org.http4k.core.*
 import org.http4k.format.Jackson.auto
 import org.junit.AfterClass
 import org.junit.BeforeClass
+import swami2020.api.request.CreateUser
+import swami2020.api.response.Team
+import swami2020.api.response.User
 import swami2020.app.AppFactory
 import swami2020.properties.DatabaseProperties
 import swami2020.properties.ServerProperties
 import swami2020.properties.SwamiProperties
-import swami2020.response.Team
-import swami2020.response.User
 import java.util.*
 import kotlin.test.*
 
@@ -74,6 +72,7 @@ class AppTest {
     // Users
     private val userLens = Body.auto<User>().toLens()
     private val userListLens = Body.auto<Collection<User>>().toLens()
+    private val createUserLens = Body.auto<CreateUser>().toLens()
     private val usersPath = "users"
     private val usersUrl = "$urlBase/$usersPath"
 
@@ -134,11 +133,11 @@ class AppTest {
 
     // Users
     @Test
-    fun testUsersList() {
-        val resp = client(Request(Method.GET, usersUrl))
-        assertEquals(Status.OK, resp.status)
+    fun testUserUpdates() {
+        val firstListResponse = client(Request(Method.GET, usersUrl))
+        assertEquals(Status.OK, firstListResponse.status)
 
-        val users = userListLens(resp)
+        val users = userListLens(firstListResponse)
 
         assertEquals(2, users.size)
         users.forEach { user ->
@@ -147,6 +146,65 @@ class AppTest {
             assertNotNull(user.lastName)
             assertNotNull(user.id)
         }
+
+        val createUser = CreateUser(
+                "Jonny",
+                "Tester",
+                "jonny.tester@testemail.com",
+                "pAssword-22"
+        )
+
+        val createResponse = client(
+                createUserLens(
+                        createUser,
+                        Request(Method.POST, usersUrl)
+                )
+        )
+
+        assertEquals(Status.OK, createResponse.status)
+
+        val newUser = userLens(createResponse)
+        assertNotNull(newUser.id)
+        assertEquals("Jonny", newUser.firstName)
+        assertEquals("Tester", newUser.lastName)
+        assertEquals("jonny.tester@testemail.com", newUser.email)
+
+        val postCreateListResponse = client(Request(Method.GET, usersUrl))
+        assertEquals(Status.OK, postCreateListResponse.status)
+        val postCreateUsers = userListLens(postCreateListResponse)
+
+        assertEquals(3, postCreateUsers.size)
+        var found = false
+        postCreateUsers.forEach { user ->
+            assertNotNull(user.email)
+            assertNotNull(user.firstName)
+            assertNotNull(user.lastName)
+            assertNotNull(user.id)
+
+            if (
+                    user.firstName == "Jonny" &&
+                    user.lastName == "Tester" &&
+                    user.email == "jonny.tester@testemail.com"
+            ) {
+                found = true
+            }
+        }
+
+        assertTrue(found, "Newly created user not found")
+
+        val deleteResponse = client(Request(Method.DELETE, "$usersUrl/${newUser.id}"))
+        assertEquals(Status.OK, deleteResponse.status)
+
+        val finalListResponse = client(Request(Method.GET, usersUrl))
+        assertEquals(Status.OK, finalListResponse.status)
+
+        val finalUsers = userListLens(finalListResponse)
+        assertEquals(2, finalUsers.size)
+
+        users.forEach {
+            assertNotEquals(it.id, newUser.id)
+        }
+
     }
 
     @Test
