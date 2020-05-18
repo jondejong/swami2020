@@ -11,10 +11,12 @@ import org.http4k.core.Status
 import org.http4k.format.Jackson.auto
 import org.junit.AfterClass
 import org.junit.BeforeClass
+import swami2020.app.AppFactory
 import swami2020.properties.DatabaseProperties
 import swami2020.properties.ServerProperties
 import swami2020.properties.SwamiProperties
 import swami2020.response.Team
+import swami2020.response.User
 import java.util.*
 import kotlin.test.*
 
@@ -25,7 +27,9 @@ class AppTest {
         lateinit var app: App
 
         // Application under test
-        @BeforeClass @JvmStatic fun setup() {
+        @BeforeClass
+        @JvmStatic
+        fun setup() {
 
             //TODO: Load properties from YAML
             val swamiProperties = SwamiProperties(
@@ -42,36 +46,56 @@ class AppTest {
             app.start()
         }
 
-        @AfterClass @JvmStatic fun teardown() {
+        @AfterClass
+        @JvmStatic
+        fun teardown() {
             app.stop()
         }
     }
 
     private val client = OkHttp()
 
+    private val server = "http://localhost"
+    private val urlBase = "$server:$port"
+
+    // Teams
     private val teamLens = Body.auto<Team>().toLens()
     private val teamListLens = Body.auto<Collection<Team>>().toLens()
-
-    private val server = "http://localhost"
     private val teamsPath = "teams"
-    private val urlBase = "$server:$port"
     private val teamsUrl = "$urlBase/$teamsPath"
 
-    private val testTeam = Team(
+    private val expectedTeam = Team(
             UUID.fromString("9579145e-1946-4f42-9c47-42fefb4eb8e6"),
             "Iowa",
             "Hawkeyes",
             "Big Ten"
     )
 
-    @Test fun testHealth() {
+    // Users
+    private val userLens = Body.auto<User>().toLens()
+    private val userListLens = Body.auto<Collection<User>>().toLens()
+    private val usersPath = "users"
+    private val usersUrl = "$urlBase/$usersPath"
+
+    private val expectedUser = User(
+            UUID.fromString("49c4db64-acd1-431f-b013-7f35895ec85b"),
+            "Test",
+            "User",
+            "test.user@testemail.com"
+    )
+
+    // Health
+    @Test
+    fun testHealth() {
         val resp = client(Request(Method.GET, "$urlBase/hello/jonny"))
         assertNotNull(resp)
         assertEquals(Status.OK, resp.status)
         assertEquals("Hello, jonny!", resp.bodyString())
     }
 
-    @Test fun testTeamList() {
+    // Teams
+    @Test
+    fun testTeamList() {
         val resp = client(Request(Method.GET, teamsUrl))
         assertNotNull(resp)
         assertEquals(Status.OK, resp.status)
@@ -87,26 +111,68 @@ class AppTest {
         }
     }
 
-    @Test fun testTeamFetch() {
-        val resp = client(Request(Method.GET, "$teamsUrl/${testTeam.id.toString()}"))
-        assertNotNull(resp)
+    @Test
+    fun testTeamFetch() {
+        val resp = client(Request(Method.GET, "$teamsUrl/${expectedTeam.id.toString()}"))
         assertEquals(Status.OK, resp.status)
 
-        val team = teamLens(resp)
-        assertEquals(testTeam, team)
+        val actualTeam = teamLens(resp)
+        assertEquals(expectedTeam, actualTeam)
     }
 
-    @Test fun testTeamNotFound() {
+    @Test
+    fun testTeamNotFound() {
         val resp = client(Request(Method.GET, "$teamsUrl/${UUID.randomUUID()}"))
         assertEquals(Status.NOT_FOUND, resp.status)
     }
 
-    @Test fun testInvalidTeamIdentifier() {
+    @Test
+    fun testInvalidTeamIdentifier() {
         val resp = client(Request(Method.GET, "$teamsUrl/notUUID"))
         assertEquals(Status.BAD_REQUEST, resp.status)
     }
 
-    @Test fun testBadURLNotFound() {
+    // Users
+    @Test
+    fun testUsersList() {
+        val resp = client(Request(Method.GET, usersUrl))
+        assertEquals(Status.OK, resp.status)
+
+        val users = userListLens(resp)
+
+        assertEquals(2, users.size)
+        users.forEach { user ->
+            assertNotNull(user.email)
+            assertNotNull(user.firstName)
+            assertNotNull(user.lastName)
+            assertNotNull(user.id)
+        }
+    }
+
+    @Test
+    fun testUsersFetch() {
+        val resp = client(Request(Method.GET, "$usersUrl/${expectedUser.id}"))
+        assertEquals(Status.OK, resp.status)
+
+        val actualUser = userLens(resp)
+        assertEquals(expectedUser, actualUser)
+    }
+
+    @Test
+    fun testUserNotFound() {
+        val resp = client(Request(Method.GET, "$usersUrl/${UUID.randomUUID()}"))
+        assertEquals(Status.NOT_FOUND, resp.status)
+    }
+
+    @Test
+    fun testInvalidUserIdentifier() {
+        val resp = client(Request(Method.GET, "$usersUrl/notUUID"))
+        assertEquals(Status.BAD_REQUEST, resp.status)
+    }
+
+    // Errors
+    @Test
+    fun testBadURLNotFound() {
         val resp = client(Request(Method.GET, "$urlBase/things"))
         assertEquals(Status.NOT_FOUND, resp.status)
     }
