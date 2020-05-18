@@ -9,7 +9,7 @@ import java.util.*
 
 class UserRepository() : SwamiRepository() {
 
-    private val userMapper = {context: DSLContext ->
+    private val userMapper = { context: DSLContext ->
         context.select(
                 SWAMI_USER.ID,
                 SWAMI_USER.FIRST_NAME,
@@ -22,14 +22,14 @@ class UserRepository() : SwamiRepository() {
     }
 
     fun list(): Collection<SwamiUser> {
-        context.use{context ->
+        context.use { context ->
             return userMapper(context)
                     .fetchInto(SwamiUser::class.java)
         }
     }
 
     fun fetch(id: UUID): SwamiUser {
-        context.use{context ->
+        context.use { context ->
             val users = userMapper(context)
                     .where(SWAMI_USER.ID.eq(id.toString()))
                     .fetchInto(SwamiUser::class.java)
@@ -38,6 +38,35 @@ class UserRepository() : SwamiRepository() {
                 throw ItemNotFoundException()
             }
             return users[0]
+        }
+    }
+
+    fun save(swamiUser: SwamiUser) {
+        context.use { context ->
+            context.insertInto(
+                    SWAMI_USER,
+                    SWAMI_USER.ID,
+                    SWAMI_USER.FIRST_NAME,
+                    SWAMI_USER.LAST_NAME,
+                    SWAMI_USER.EMAIL,
+                    SWAMI_USER.PASSWORD,
+                    SWAMI_USER.SALT
+            ).values(
+                    swamiUser.id,
+                    swamiUser.firstName,
+                    swamiUser.lastName,
+                    swamiUser.email,
+                    swamiUser.password,
+                    swamiUser.salt
+            ).execute()
+        }
+    }
+
+    fun delete(id: String) {
+        context.use { context ->
+            context.deleteFrom(SWAMI_USER)
+                    .where(SWAMI_USER.ID.eq(id))
+                    .execute()
         }
     }
 }

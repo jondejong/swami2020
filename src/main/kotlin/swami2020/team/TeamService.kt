@@ -2,7 +2,7 @@ package swami2020.team
 
 import swami2020.app.AppFactory
 import swami2020.app.SwamiConfigurable
-import swami2020.response.Team
+import swami2020.api.response.Team
 import java.util.*
 
 class TeamService() : SwamiConfigurable {

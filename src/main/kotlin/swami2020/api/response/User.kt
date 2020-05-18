@@ -1,4 +1,4 @@
-package swami2020.response
+package swami2020.api.response
 
 import java.util.*
 
