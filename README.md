@@ -33,8 +33,20 @@ Currently, the application has only been verified running with Gradle:
 
 `./gradlew run`
 
-The application exposes two `GET` endpoints:
+## Teams
+The application exposes two `GET` endpoints for Teams: 
 
 `http://localhost:9000/teams` will list teams
 
-`http://localhost:9000/teams/<uuid>` will return the specific team tied identified by the UUID, and throw a 404 if not found) 
+`http://localhost:9000/teams/<uuid>` will return the specific team tied identified by the UUID, and throw a 404 if not found)
+
+## Users
+The applications exposes 4 endpoints for Users:
+
+`GET http://localhost:9000/users` will list users
+
+`POST http://localhost:9000/users` will create a user
+
+`GET http://localhost:9000/users/<uuid>` will return the specific user tied identified by the UUID, and throw a 404 if not found)
+
+`DELETE http://localhost:9000/users/<uuid>` will delete the specific user tied identified by the UUID if it exists
