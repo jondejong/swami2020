@@ -8,9 +8,7 @@ import org.http4k.core.Method
 import org.http4k.core.Request
 import org.http4k.core.Status
 import org.http4k.format.Jackson.auto
-import swami2020.api.request.CreateUser
 import swami2020.api.response.Team
-import swami2020.api.response.User
 import java.util.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -20,7 +18,6 @@ class TeamTest: BaseTest() {
 
     private val teamLens = Body.auto<Team>().toLens()
     private val teamListLens = Body.auto<Collection<Team>>().toLens()
-    private val teamsPath = "teams"
     private val teamsUrl = "$urlBase/$teamsPath"
 
     private val expectedTeam = Team(

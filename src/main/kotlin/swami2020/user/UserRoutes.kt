@@ -5,12 +5,13 @@ import org.http4k.format.Jackson.auto
 import org.http4k.routing.bind
 import org.http4k.routing.path
 import swami2020.api.request.CreateUser
+import swami2020.api.request.RequestHandler
 import swami2020.app.AppFactory
 import swami2020.app.SwamiConfigurable
 import swami2020.api.response.User
 import java.util.*
 
-class UserRoutes : SwamiConfigurable {
+class UserRoutes: RequestHandler() {
 
     private lateinit var userService: UserService
     private val userLens = Body.auto<User>().toLens()
@@ -18,6 +19,7 @@ class UserRoutes : SwamiConfigurable {
     private val createUserLens = Body.auto<CreateUser>().toLens()
 
     override fun setUp(factory: AppFactory) {
+        super.setUp(factory)
         this.userService = factory.userService
     }
 
@@ -30,10 +32,16 @@ class UserRoutes : SwamiConfigurable {
     }
 
     private val userFetchHandler = { request: Request ->
+        var id = request.path("id")
+
+        if(id == "self") {
+            val user: AuthenticatedUser? = contexts[request][AppFactory.AUTHENTICATED_USER]
+            id = user?.id.toString()
+        }
+
+        // Special case for fetching the logged in user
         userLens(
-                userService.fetch(UUID.fromString(
-                        request.path("id")
-                )),
+                userService.fetch(UUID.fromString(id)),
                 Response(Status.OK)
         )
     }

@@ -9,7 +9,7 @@ import swami2020.api.response.User
 import swami2020.security.Password
 import java.util.*
 
-class UserService() : SwamiConfigurable {
+class UserService(): SwamiConfigurable {
 
     private lateinit var userRepository: UserRepository
 
@@ -23,6 +23,10 @@ class UserService() : SwamiConfigurable {
 
     fun fetch(id: UUID): User {
         return userFrom(userRepository.fetch(id))
+    }
+
+    fun fetchByToken(token: String): AuthenticatedUser {
+        return AuthenticatedUser.from(userRepository.fetchByToken(token))
     }
 
     fun create(createUser: CreateUser) : User {
