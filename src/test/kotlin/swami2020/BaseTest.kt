@@ -40,17 +40,5 @@ open class BaseTest {
         val usersUrl = "$urlBase/$usersPath"
     }
 
-
-
-//    val client = BaseTest.client
-
-
     val authenticationHeader = AppFactory.AUTHENTICATION_HEADER
-
-//    // Multiple use lenses
-//    val loginRequestLens = BaseTest.loginRequestLens
-//    val loginResponseLens = BaseTest.loginResponseLens
-
-
-
 }
