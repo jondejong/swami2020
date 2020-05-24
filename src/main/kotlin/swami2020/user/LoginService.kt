@@ -1,7 +1,7 @@
 package swami2020.user
 
 import swami2020.api.response.LoginResponse
-import swami2020.api.response.userFrom
+import swami2020.api.response.builder.userFrom
 import swami2020.app.AppFactory
 import swami2020.app.SwamiConfigurable
 import swami2020.exception.ItemNotFoundException

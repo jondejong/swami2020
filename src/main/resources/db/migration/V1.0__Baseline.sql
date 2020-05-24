@@ -85,7 +85,7 @@ VALUES ('a48c9385-a0ac-4915-9535-b83337ad6958', 'Cal', 'Golden Bears', '7cebf93f
 INSERT INTO team(id, name, nick_name, conference)
 VALUES ('270e5bf0-451b-469c-bc7e-ad3063ea052d', 'Colorado', 'Buffaloes', '7cebf93f-f7db-499a-b591-72ce4a52264c');
 INSERT INTO team(id, name, nick_name, conference)
-VALUES ('6c2917ce-8fa6-4929-840a-f19d2532daa8', 'Oregon', '', '7cebf93f-f7db-499a-b591-72ce4a52264c');
+VALUES ('6c2917ce-8fa6-4929-840a-f19d2532daa8', 'Oregon', 'Ducks', '7cebf93f-f7db-499a-b591-72ce4a52264c');
 INSERT INTO team(id, name, nick_name, conference)
 VALUES ('3da84ac8-18fc-4d23-80b3-b5724383e182', 'Oregon State', 'Beavers', '7cebf93f-f7db-499a-b591-72ce4a52264c');
 INSERT INTO team(id, name, nick_name, conference)

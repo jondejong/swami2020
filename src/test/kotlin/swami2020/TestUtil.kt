@@ -19,7 +19,9 @@ object TestUtil {
             )
     )
 
-    private val app = App(AppFactory(swamiProperties))
+    val appFactory = AppFactory(swamiProperties)
+
+    private val app = App(appFactory)
 
     val start = {app.start()}
     val stop = {app.stop()}

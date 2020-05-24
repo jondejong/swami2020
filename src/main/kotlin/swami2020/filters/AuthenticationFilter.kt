@@ -8,7 +8,6 @@ import swami2020.app.AppFactory
 import swami2020.app.SwamiConfigurable
 import swami2020.exception.ItemNotFoundException
 import swami2020.exception.UnauthenticatedException
-import swami2020.user.AuthenticatedUser
 import swami2020.user.UserService
 
 class AuthenticationFilter : SwamiConfigurable {
@@ -24,7 +23,7 @@ class AuthenticationFilter : SwamiConfigurable {
     val authenticationFilter = Filter { next: HttpHandler ->
         { request: Request ->
             val token = request.header(AppFactory.AUTHENTICATION_HEADER)
-            if(token == null) {
+            if (token == null) {
                 throw UnauthenticatedException()
             } else {
                 try {

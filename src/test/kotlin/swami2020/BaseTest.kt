@@ -11,6 +11,7 @@ import swami2020.app.AppFactory
 
 open class BaseTest {
     companion object {
+
         // Application under test
         @BeforeClass
         @JvmStatic

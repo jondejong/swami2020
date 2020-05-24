@@ -3,9 +3,9 @@ package swami2020.team
 import com.jondejong.swami.model.tables.Conference.CONFERENCE
 import com.jondejong.swami.model.tables.Team.TEAM
 import org.jooq.DSLContext
+import swami2020.api.response.Team
 import swami2020.app.SwamiRepository
 import swami2020.exception.ItemNotFoundException
-import swami2020.api.response.Team
 import java.util.*
 
 class TeamRepository() : SwamiRepository() {

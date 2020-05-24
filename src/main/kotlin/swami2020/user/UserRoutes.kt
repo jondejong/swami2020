@@ -6,12 +6,11 @@ import org.http4k.routing.bind
 import org.http4k.routing.path
 import swami2020.api.request.CreateUser
 import swami2020.api.request.RequestHandler
-import swami2020.app.AppFactory
-import swami2020.app.SwamiConfigurable
 import swami2020.api.response.User
+import swami2020.app.AppFactory
 import java.util.*
 
-class UserRoutes: RequestHandler() {
+class UserRoutes : RequestHandler() {
 
     private lateinit var userService: UserService
     private val userLens = Body.auto<User>().toLens()
@@ -34,7 +33,8 @@ class UserRoutes: RequestHandler() {
     private val userFetchHandler = { request: Request ->
         var id = request.path("id")
 
-        if(id == "self") {
+        //TODO: Make this a different route
+        if (id == "self") {
             val user: AuthenticatedUser? = contexts[request][AppFactory.AUTHENTICATED_USER]
             id = user?.id.toString()
         }
