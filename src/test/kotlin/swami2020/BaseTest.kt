@@ -1,8 +1,13 @@
 package swami2020
 
 import org.http4k.client.OkHttp
+import org.http4k.core.Body
+import org.http4k.format.Jackson.auto
 import org.junit.AfterClass
 import org.junit.BeforeClass
+import swami2020.api.request.LoginRequest
+import swami2020.api.response.LoginResponse
+import swami2020.app.AppFactory
 
 open class BaseTest {
     companion object {
@@ -18,11 +23,34 @@ open class BaseTest {
         fun teardown() {
             TestUtil.stop()
         }
+
+        val usersPath = "users"
+        val teamsPath = "teams"
+        val loginPath = "login"
+
+        val loginRequestLens = Body.auto<LoginRequest>().toLens()
+        val loginResponseLens = Body.auto<LoginResponse>().toLens()
+        val client = OkHttp()
+
+
+        val server = "http://localhost"
+        val urlBase = "$server:${TestUtil.port}"
+
+        val loginUrl = "$urlBase/$loginPath"
+        val usersUrl = "$urlBase/$usersPath"
     }
 
-    private val server = "http://localhost"
 
-    val client = OkHttp()
-    val urlBase = "$server:${TestUtil.port}"
+
+//    val client = BaseTest.client
+
+
+    val authenticationHeader = AppFactory.AUTHENTICATION_HEADER
+
+//    // Multiple use lenses
+//    val loginRequestLens = BaseTest.loginRequestLens
+//    val loginResponseLens = BaseTest.loginResponseLens
+
+
 
 }

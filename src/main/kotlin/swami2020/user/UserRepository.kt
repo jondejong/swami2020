@@ -41,6 +41,41 @@ class UserRepository() : SwamiRepository() {
         }
     }
 
+    fun fetchByEmail(emaail: String): SwamiUser {
+        context.use { context ->
+            val users = userMapper(context)
+                    .where(SWAMI_USER.EMAIL.eq(emaail))
+                    .fetchInto(SwamiUser::class.java)
+
+            if (users?.size != 1) {
+                throw ItemNotFoundException()
+            }
+            return users[0]
+        }
+    }
+
+    fun fetchByToken(token: String): SwamiUser {
+        context.use { context ->
+            val users = userMapper(context)
+                    .where(SWAMI_USER.TOKEN.eq(token))
+                    .fetchInto(SwamiUser::class.java)
+
+            if (users?.size != 1) {
+                throw ItemNotFoundException()
+            }
+            return users[0]
+        }
+    }
+
+    fun updateToken(id: UUID, token: String) {
+        context.use { context->
+            context.update(SWAMI_USER)
+                    .set(SWAMI_USER.TOKEN, token)
+                    .where(SWAMI_USER.ID.eq(id.toString()))
+                    .execute()
+        }
+    }
+
     fun save(swamiUser: SwamiUser) {
         context.use { context ->
             context.insertInto(

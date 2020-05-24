@@ -5,7 +5,9 @@ import org.http4k.core.Method
 import org.http4k.core.Request
 import org.http4k.core.Status
 import org.http4k.format.Jackson.auto
+import org.junit.BeforeClass
 import swami2020.api.request.CreateUser
+import swami2020.api.request.LoginRequest
 import swami2020.api.response.User
 import java.util.*
 import kotlin.test.assertEquals
@@ -19,19 +21,40 @@ class UserTest: BaseTest() {
     private val userLens = Body.auto<User>().toLens()
     private val userListLens = Body.auto<Collection<User>>().toLens()
     private val createUserLens = Body.auto<CreateUser>().toLens()
-    private val usersPath = "users"
     private val usersUrl = "$urlBase/$usersPath"
 
-    private val expectedUser = User(
-            UUID.fromString("49c4db64-acd1-431f-b013-7f35895ec85b"),
-            "Test",
-            "User",
-            "test.user@testemail.com"
-    )
+    companion object {
+
+        lateinit var token: String
+
+        val expectedUser = User(
+                UUID.fromString("49c4db64-acd1-431f-b013-7f35895ec85b"),
+                "Test",
+                "User",
+                "test.user@testemail.com"
+        )
+
+        @BeforeClass
+        @JvmStatic
+        fun authenticate() {
+            // Login
+            token = loginResponseLens(
+                    client(
+                            loginRequestLens(
+                                    LoginRequest(
+                                            username = expectedUser.email,
+                                            password = "P@ssw0rd1"
+                                    ),
+                                    Request(Method.POST, loginUrl)
+                            )
+                    )
+            ).token
+        }
+    }
 
     @Test
     fun testUserUpdates() {
-        val firstListResponse = client(Request(Method.GET, usersUrl))
+        val firstListResponse = client(SecureRequest(Method.GET, usersUrl, token))
         assertEquals(Status.OK, firstListResponse.status)
 
         val users = userListLens(firstListResponse)
@@ -54,7 +77,7 @@ class UserTest: BaseTest() {
         val createResponse = client(
                 createUserLens(
                         createUser,
-                        Request(Method.POST, usersUrl)
+                        SecureRequest(Method.POST, usersUrl, token)
                 )
         )
 
@@ -66,7 +89,7 @@ class UserTest: BaseTest() {
         assertEquals("Tester", newUser.lastName)
         assertEquals("jonny.tester@testemail.com", newUser.email)
 
-        val postCreateListResponse = client(Request(Method.GET, usersUrl))
+        val postCreateListResponse = client(SecureRequest(Method.GET, usersUrl, token))
         assertEquals(Status.OK, postCreateListResponse.status)
         val postCreateUsers = userListLens(postCreateListResponse)
 
@@ -89,10 +112,10 @@ class UserTest: BaseTest() {
 
         assertTrue(found, "Newly created user not found")
 
-        val deleteResponse = client(Request(Method.DELETE, "$usersUrl/${newUser.id}"))
+        val deleteResponse = client(SecureRequest(Method.DELETE, "$usersUrl/${newUser.id}", token))
         assertEquals(Status.OK, deleteResponse.status)
 
-        val finalListResponse = client(Request(Method.GET, usersUrl))
+        val finalListResponse = client(SecureRequest(Method.GET, usersUrl, token))
         assertEquals(Status.OK, finalListResponse.status)
 
         val finalUsers = userListLens(finalListResponse)
@@ -101,12 +124,11 @@ class UserTest: BaseTest() {
         users.forEach {
             assertNotEquals(it.id, newUser.id)
         }
-
     }
 
     @Test
     fun testUsersFetch() {
-        val resp = client(Request(Method.GET, "$usersUrl/${expectedUser.id}"))
+        val resp = client(SecureRequest(Method.GET, "$usersUrl/${expectedUser.id}", token))
         assertEquals(Status.OK, resp.status)
 
         val actualUser = userLens(resp)
@@ -115,13 +137,19 @@ class UserTest: BaseTest() {
 
     @Test
     fun testUserNotFound() {
-        val resp = client(Request(Method.GET, "$usersUrl/${UUID.randomUUID()}"))
+        val resp = client(SecureRequest(Method.GET, "$usersUrl/${UUID.randomUUID()}", token))
         assertEquals(Status.NOT_FOUND, resp.status)
     }
 
     @Test
-    fun testInvalidUserIdentifier() {
-        val resp = client(Request(Method.GET, "$usersUrl/notUUID"))
-        assertEquals(Status.BAD_REQUEST, resp.status)
+    fun testListSecured() {
+        val resp = client(Request(Method.GET, "$usersUrl"))
+        assertEquals(Status.UNAUTHORIZED, resp.status)
+    }
+
+    @Test
+    fun testFetchSecured() {
+        val resp = client(Request(Method.GET, "$usersUrl/${UUID.randomUUID()}"))
+        assertEquals(Status.UNAUTHORIZED, resp.status)
     }
 }
