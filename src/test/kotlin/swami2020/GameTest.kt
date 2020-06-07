@@ -32,12 +32,11 @@ class GameTest : BaseTest() {
 
         private val gameListLens = Body.auto<Collection<Game>>().toLens()
         private val gameLens = Body.auto<Game>().toLens()
+        private val createGameLens = Body.auto<CreateGameRequest>().toLens()
 
         private val gamesUrl = "$urlBase/games"
 
         lateinit var token: String
-
-        val gameIds = mutableSetOf<UUID>()
 
         // TODO: Create games for a week
         @BeforeClass
@@ -122,9 +121,7 @@ class GameTest : BaseTest() {
                     )
             )
 
-            testGames.map {
-                gameIds.add(gameService.create(it))
-            }
+            testGames.map { gameService.create(it) }
         }
 
         fun authenticate() {
@@ -146,7 +143,11 @@ class GameTest : BaseTest() {
         @JvmStatic
         fun destroy() {
             //TODO: Destroy the games that were created for the tests
-            gameIds.map { TestUtil.appFactory.gameService.delete(it) }
+            setOf<UUID>(week1, week2, week3).map {
+                TestUtil.appFactory.gameService.listByWeek(it).map {
+                    TestUtil.appFactory.gameService.delete(it.id)
+                }
+            }
         }
 
     }
@@ -173,7 +174,7 @@ class GameTest : BaseTest() {
 
     @Test
     fun fetchGame() {
-        val id = gameIds.first()
+        val id = TestUtil.appFactory.gameService.listByWeek(week1).first().id
         val actual = client(SecureRequest(Method.GET, "$gamesUrl/${id}", token))
         assertEquals(Status.OK, actual.status)
 
@@ -185,18 +186,60 @@ class GameTest : BaseTest() {
     }
 
     @Test
-    fun listAndDeleteGames() {
+    fun list() {
+        // Not needed long term
         val actual = client(SecureRequest(Method.GET, gamesUrl, token))
         assertEquals(Status.OK, actual.status)
+    }
 
-        assertEquals(4, gameListLens(actual).size)
-
-        SecureRequest(Method.DELETE, "$gamesUrl/${gameIds.first()}", token)
-
-        val postDeleteActual = client(SecureRequest(Method.GET, gamesUrl, token))
+    @Test
+    fun createAndDeleteGame() {
+        val actual = client(SecureRequest(Method.GET, "$gamesUrl/week/${week3}", token))
         assertEquals(Status.OK, actual.status)
 
-        assertEquals(4, gameListLens(postDeleteActual).size)
+        val games = gameListLens(actual)
+        assertEquals(0, games.size)
+
+        val request = CreateGameRequest(
+                selections = setOf(
+                        CreateSelectionRequest(
+                                team = iowa,
+                                favorite = true,
+                                home = false
+                        ),
+                        CreateSelectionRequest(
+                                team = usc,
+                                favorite = false,
+                                home = true
+                        )
+                ),
+                complete = false,
+                cancelled = false,
+                week = week3,
+                spread = 27.5F
+        )
+
+        val createResponse = client(
+                createGameLens(
+                        request,
+                        SecureRequest(Method.POST, gamesUrl, token)
+                )
+        )
+
+        assertEquals(Status.OK, createResponse.status)
+
+        assertEquals(
+                expected = 1,
+                actual = gameListLens(
+                        client(
+                                SecureRequest(
+                                        Method.GET,
+                                        "$gamesUrl/week/${week3}",
+                                        token
+                                )
+                        )
+                ).size
+        )
     }
 
 //    TODO: implement these as the features are developed

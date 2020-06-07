@@ -6,6 +6,7 @@ import org.http4k.format.Jackson.auto
 import org.junit.AfterClass
 import org.junit.BeforeClass
 import swami2020.api.request.LoginRequest
+import swami2020.api.response.ID
 import swami2020.api.response.LoginResponse
 import swami2020.app.AppFactory
 
@@ -39,6 +40,8 @@ open class BaseTest {
 
         val loginUrl = "$urlBase/$loginPath"
         val usersUrl = "$urlBase/$usersPath"
+
+        val idLens = Body.auto<ID>().toLens()
     }
 
     val authenticationHeader = AppFactory.AUTHENTICATION_HEADER
