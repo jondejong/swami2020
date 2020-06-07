@@ -43,7 +43,7 @@ def teams = [
 [name: 'Arizona State', nickname: 'Sun Devils', conference: 'PAC_12'],
 [name: 'Cal', nickname: 'Golden Bears', conference: 'PAC_12'],
 [name: 'Colorado', nickname: 'Buffaloes', conference: 'PAC_12'],
-[name: 'Oregon', nickname: '', conference: 'PAC_12'],
+[name: 'Oregon', nickname: 'Ducks', conference: 'PAC_12'],
 [name: 'Oregon State', nickname: 'Beavers', conference: 'PAC_12'],
 [name: 'Stanford', nickname: 'Cardinal', conference: 'PAC_12'],
 [name: 'UCLA', nickname: 'Bruins', conference: 'PAC_12'],

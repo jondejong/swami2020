@@ -68,7 +68,7 @@ class UserRepository() : SwamiRepository() {
     }
 
     fun updateToken(id: UUID, token: String) {
-        context.use { context->
+        context.use { context ->
             context.update(SWAMI_USER)
                     .set(SWAMI_USER.TOKEN, token)
                     .where(SWAMI_USER.ID.eq(id.toString()))

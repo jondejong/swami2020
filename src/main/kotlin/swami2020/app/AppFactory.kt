@@ -4,6 +4,7 @@ import com.zaxxer.hikari.HikariDataSource
 import org.http4k.core.RequestContexts
 import swami2020.database.DatabaseConfig
 import swami2020.filters.AuthenticationFilter
+import swami2020.game.*
 import swami2020.properties.SwamiProperties
 import swami2020.team.TeamRepository
 import swami2020.team.TeamRoutes
@@ -40,6 +41,17 @@ class AppFactory(properties: SwamiProperties) {
     val loginRoutes = LoginRoutes()
     val authenticationFilter = AuthenticationFilter()
 
+    // Games
+    val gameRepository = GameRepository()
+    val gameService = GameService()
+    val gameRoutes = GameRoutes()
+    val selectionRepository = SelectionRepository()
+
+    // Weeks
+    val weekRepository = WeekRepository()
+    val weekService = WeekService()
+    val weekRoutes = WeekRoutes()
+
     val dataSource = HikariDataSource(databaseConfig)
 
     //Set Up
@@ -59,5 +71,16 @@ class AppFactory(properties: SwamiProperties) {
         loginService.setUp(this)
         loginRoutes.setUp(this)
         authenticationFilter.setUp(this)
+
+        // Games
+        gameRepository.setUp(this)
+        gameService.setUp(this)
+        gameRoutes.setUp(this)
+        selectionRepository.setUp(this)
+
+        // Weeks
+        weekRepository.setUp(this)
+        weekService.setUp(this)
+        weekRoutes.setUp(this)
     }
 }

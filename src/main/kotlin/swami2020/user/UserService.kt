@@ -2,14 +2,14 @@ package swami2020.user
 
 import com.jondejong.swami.model.tables.pojos.SwamiUser
 import swami2020.api.request.CreateUser
+import swami2020.api.response.User
+import swami2020.api.response.builder.userFrom
 import swami2020.app.AppFactory
 import swami2020.app.SwamiConfigurable
-import swami2020.api.response.userFrom
-import swami2020.api.response.User
 import swami2020.security.Password
 import java.util.*
 
-class UserService(): SwamiConfigurable {
+class UserService() : SwamiConfigurable {
 
     private lateinit var userRepository: UserRepository
 
@@ -29,7 +29,7 @@ class UserService(): SwamiConfigurable {
         return AuthenticatedUser.from(userRepository.fetchByToken(token))
     }
 
-    fun create(createUser: CreateUser) : User {
+    fun create(createUser: CreateUser): User {
         val salt = UUID.randomUUID().toString()
         val swamiUser = SwamiUser(
                 UUID.randomUUID().toString(),
