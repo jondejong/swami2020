@@ -37,6 +37,8 @@ class GameService : SwamiConfigurable {
     }
 
     fun delete(id: UUID) {
+
+        //TODO: Wrap this in a transaction
         gameRepository.delete(id.toString())
         selectionRepository.deleteByGame(id.toString())
     }
