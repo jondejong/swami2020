@@ -2,7 +2,7 @@ package swami2020.game
 
 import jdk.jshell.spi.ExecutionControl
 import swami2020.api.Game
-import swami2020.api.request.CreateGameRequest
+import swami2020.api.request.CreateGame
 import swami2020.api.response.builder.RecordGroup
 import swami2020.api.response.builder.gameFrom
 import swami2020.app.AppFactory
@@ -10,7 +10,7 @@ import swami2020.app.SwamiConfigurable
 import java.util.*
 import kotlin.collections.HashMap
 
-class GameService() : SwamiConfigurable {
+class GameService : SwamiConfigurable {
     private lateinit var gameRepository: GameRepository
     private lateinit var selectionRepository: SelectionRepository
 
@@ -27,10 +27,10 @@ class GameService() : SwamiConfigurable {
         return processRecords(gameRepository.list())
     }
 
-    fun create(createGameRequest: CreateGameRequest): UUID {
-        val game = NewGame.from(createGameRequest)
+    fun create(createGame: CreateGame): UUID {
+        val game = NewGame.from(createGame)
         gameRepository.create(game)
-        createGameRequest.selections.map {
+        createGame.selections.map {
             selectionRepository.create(NewSelection.from(game.id, it))
         }
         return game.id

@@ -5,9 +5,7 @@ import org.http4k.core.Body
 import org.http4k.format.Jackson.auto
 import org.junit.AfterClass
 import org.junit.BeforeClass
-import swami2020.api.request.LoginRequest
 import swami2020.api.response.ID
-import swami2020.api.response.LoginResponse
 import swami2020.app.AppFactory
 
 open class BaseTest {
@@ -30,8 +28,8 @@ open class BaseTest {
         val teamsPath = "teams"
         val loginPath = "login"
 
-        val loginRequestLens = Body.auto<LoginRequest>().toLens()
-        val loginResponseLens = Body.auto<LoginResponse>().toLens()
+        val loginRequestLens = Body.auto<swami2020.api.request.Login>().toLens()
+        val loginResponseLens = Body.auto<swami2020.api.response.Login>().toLens()
         val client = OkHttp()
 
 

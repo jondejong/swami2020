@@ -1,6 +1,6 @@
 package swami2020.game
 
-import swami2020.api.request.CreateGameRequest
+import swami2020.api.request.CreateGame
 import java.math.BigDecimal
 import java.util.*
 
@@ -12,7 +12,7 @@ data class NewGame(
         val spread: BigDecimal
 ) {
     companion object {
-        val from = { request: CreateGameRequest ->
+        val from = { request: CreateGame ->
             NewGame(
                     id = UUID.randomUUID(),
                     week = request.week,

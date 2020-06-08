@@ -7,7 +7,7 @@ import swami2020.app.SwamiRepository
 import swami2020.exception.ItemNotFoundException
 import java.util.*
 
-class UserRepository() : SwamiRepository() {
+class UserRepository : SwamiRepository() {
 
     private val userMapper = { context: DSLContext ->
         context.select(

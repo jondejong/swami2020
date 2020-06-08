@@ -1,6 +1,6 @@
 package swami2020.user
 
-import swami2020.api.response.LoginResponse
+import swami2020.api.response.Login
 import swami2020.api.response.builder.userFrom
 import swami2020.app.AppFactory
 import swami2020.app.SwamiConfigurable
@@ -17,7 +17,7 @@ class LoginService : SwamiConfigurable {
         this.userRepository = factory.userRepository
     }
 
-    fun validateUser(username: String, password: String): LoginResponse {
+    fun validateUser(username: String, password: String): Login {
         try {
             val swamiUser = userRepository.fetchByEmail(username)
             Password.validate(swamiUser.password, password, swamiUser.salt)
@@ -26,7 +26,7 @@ class LoginService : SwamiConfigurable {
                     id = UUID.fromString(swamiUser.id),
                     token = token
             )
-            return LoginResponse(
+            return Login(
                     userFrom(swamiUser),
                     token
             )

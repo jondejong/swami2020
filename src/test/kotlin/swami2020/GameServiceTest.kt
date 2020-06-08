@@ -2,8 +2,8 @@ package swami2020
 
 import swami2020.game.GameService
 import org.junit.BeforeClass
-import swami2020.api.request.CreateGameRequest
-import swami2020.api.request.CreateSelectionRequest
+import swami2020.api.request.CreateGame
+import swami2020.api.request.CreateSelection
 import swami2020.exception.ItemNotFoundException
 import java.util.*
 import kotlin.test.*
@@ -32,14 +32,14 @@ class GameServiceTest : BaseTest() {
 
     @Test
     fun createAndDeleteGame() {
-        val request = CreateGameRequest(
+        val request = CreateGame(
                 selections = setOf(
-                        CreateSelectionRequest(
+                        CreateSelection(
                                 team = iowa,
                                 favorite = true,
                                 home = false
                         ),
-                        CreateSelectionRequest(
+                        CreateSelection(
                                 team = minnesota,
                                 favorite = false,
                                 home = true

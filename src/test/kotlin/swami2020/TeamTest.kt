@@ -28,7 +28,7 @@ class TeamTest: BaseTest() {
     )
 
     @Test
-    fun testTeamList() {
+    fun teamList() {
         val resp = client(Request(Method.GET, teamsUrl))
         assertNotNull(resp)
         assertEquals(Status.OK, resp.status)
@@ -45,7 +45,7 @@ class TeamTest: BaseTest() {
     }
 
     @Test
-    fun testTeamFetch() {
+    fun teamFetch() {
         val resp = client(Request(Method.GET, "$teamsUrl/${expectedTeam.id.toString()}"))
         assertEquals(Status.OK, resp.status)
 
@@ -54,13 +54,13 @@ class TeamTest: BaseTest() {
     }
 
     @Test
-    fun testTeamNotFound() {
+    fun teamNotFound() {
         val resp = client(Request(Method.GET, "$teamsUrl/${UUID.randomUUID()}"))
         assertEquals(Status.NOT_FOUND, resp.status)
     }
 
     @Test
-    fun testInvalidTeamIdentifier() {
+    fun invalidTeamIdentifier() {
         val resp = client(Request(Method.GET, "$teamsUrl/notUUID"))
         assertEquals(Status.BAD_REQUEST, resp.status)
     }

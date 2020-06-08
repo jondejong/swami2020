@@ -3,7 +3,7 @@ package swami2020.game
 import com.jondejong.swami.model.tables.Selection.SELECTION
 import swami2020.app.SwamiRepository
 
-class SelectionRepository() : SwamiRepository() {
+class SelectionRepository : SwamiRepository() {
 
     fun create(selection: NewSelection) {
         context.use { context ->

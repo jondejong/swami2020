@@ -5,7 +5,7 @@ import swami2020.app.AppFactory
 import swami2020.app.SwamiConfigurable
 import java.util.*
 
-class TeamService() : SwamiConfigurable {
+class TeamService : SwamiConfigurable {
 
     private lateinit var teamRepository: TeamRepository
 

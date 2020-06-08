@@ -11,6 +11,4 @@ data class Game(
         val weekId: UUID,
         val spread: Float,
         var selections: Collection<Selection>
-) {
-
-}
+)

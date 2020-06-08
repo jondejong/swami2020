@@ -10,7 +10,7 @@ class AppTest: BaseTest()  {
 
     // Health
     @Test
-    fun testHealth() {
+    fun health() {
         val resp = client(Request(Method.GET, "$urlBase/hello/jonny"))
         assertNotNull(resp)
         assertEquals(Status.OK, resp.status)
@@ -19,7 +19,7 @@ class AppTest: BaseTest()  {
 
     // Errors
     @Test
-    fun testBadURLNotFound() {
+    fun badURLNotFound() {
         val resp = client(Request(Method.GET, "$urlBase/things"))
         assertEquals(Status.NOT_FOUND, resp.status)
     }
