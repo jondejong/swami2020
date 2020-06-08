@@ -7,7 +7,7 @@ import org.http4k.core.Status
 import org.http4k.format.Jackson.auto
 import org.junit.BeforeClass
 import swami2020.api.request.CreateUser
-import swami2020.api.request.LoginRequest
+import swami2020.api.request.Login
 import swami2020.api.response.User
 import java.util.*
 import kotlin.test.assertEquals
@@ -41,7 +41,7 @@ class UserTest: BaseTest() {
             token = loginResponseLens(
                     client(
                             loginRequestLens(
-                                    LoginRequest(
+                                    Login(
                                             username = expectedUser.email,
                                             password = "P@ssw0rd1"
                                     ),

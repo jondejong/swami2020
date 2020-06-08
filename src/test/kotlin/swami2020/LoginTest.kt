@@ -5,8 +5,7 @@ import org.http4k.core.Method
 import org.http4k.core.Request
 import org.http4k.core.Status
 import org.http4k.format.Jackson.auto
-import swami2020.api.request.LoginRequest
-import swami2020.api.response.LoginResponse
+import swami2020.api.request.Login
 import swami2020.api.response.User
 import java.util.*
 import kotlin.test.*
@@ -23,8 +22,8 @@ class LoginTest : BaseTest() {
     )
 
     @Test
-    fun testLogin() {
-        val loginRequest = LoginRequest(
+    fun login() {
+        val loginRequest = Login(
                 username = expectedUser.email,
                 password = "P@ssw0rd1"
         )
@@ -58,7 +57,7 @@ class LoginTest : BaseTest() {
     }
 
     @Test
-    fun testAuthentication() {
+    fun authentication() {
         // Hitting a secured endpoint should fail
         val unauthenticatedActual = client(Request(Method.GET, "$usersUrl"))
         assertEquals(Status.UNAUTHORIZED, unauthenticatedActual.status)
@@ -67,7 +66,7 @@ class LoginTest : BaseTest() {
         val response = loginResponseLens(
                 client(
                         loginRequestLens(
-                                LoginRequest(
+                                Login(
                                         username = expectedUser.email,
                                         password = "P@ssw0rd1"
                                 ),
@@ -87,8 +86,8 @@ class LoginTest : BaseTest() {
     }
 
     @Test
-    fun testBadPassword() {
-        val loginRequest = LoginRequest(
+    fun badPassword() {
+        val loginRequest = Login(
                 username = expectedUser.email,
                 password = "thisisabadpassword"
         )

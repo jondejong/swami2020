@@ -9,7 +9,7 @@ import swami2020.app.SwamiConfigurable
 import swami2020.security.Password
 import java.util.*
 
-class UserService() : SwamiConfigurable {
+class UserService : SwamiConfigurable {
 
     private lateinit var userRepository: UserRepository
 

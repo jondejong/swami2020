@@ -5,7 +5,7 @@ import com.jondejong.swami.model.tables.pojos.Week
 import org.jooq.DSLContext
 import swami2020.app.SwamiRepository
 
-class WeekRepository() : SwamiRepository() {
+class WeekRepository : SwamiRepository() {
 
     private val weekContextMapper = { context: DSLContext ->
         context.select(

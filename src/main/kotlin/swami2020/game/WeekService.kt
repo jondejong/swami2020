@@ -6,7 +6,7 @@ import swami2020.app.AppFactory
 import swami2020.app.SwamiConfigurable
 import java.util.*
 
-class WeekService() : SwamiConfigurable {
+class WeekService : SwamiConfigurable {
 
     lateinit var weekRepository: WeekRepository
 

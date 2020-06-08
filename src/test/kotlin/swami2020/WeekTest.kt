@@ -8,14 +8,13 @@ import org.http4k.format.Jackson.auto
 import org.junit.AfterClass
 import org.junit.BeforeClass
 import swami2020.api.request.CreateWeek
-import swami2020.api.request.LoginRequest
+import swami2020.api.request.Login
 import swami2020.api.request.UpdateWeekComplete
 import swami2020.api.request.UpdateWeekReady
 import swami2020.api.response.Week
 import java.util.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 class WeekTest : BaseTest() {
@@ -40,7 +39,7 @@ class WeekTest : BaseTest() {
             token = loginResponseLens(
                     client(
                             loginRequestLens(
-                                    LoginRequest(
+                                    Login(
                                             username = "test.user@testemail.com",
                                             password = "P@ssw0rd1"
                                     ),

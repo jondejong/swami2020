@@ -8,7 +8,7 @@ import swami2020.app.SwamiRepository
 import swami2020.exception.ItemNotFoundException
 import java.util.*
 
-class TeamRepository() : SwamiRepository() {
+class TeamRepository : SwamiRepository() {
 
     private val teamMapper = { context: DSLContext ->
         context.select(TEAM.ID, TEAM.NAME, TEAM.NICK_NAME, CONFERENCE.NAME.`as`("conference"))

@@ -5,19 +5,19 @@ import org.http4k.format.Jackson.auto
 import org.http4k.routing.bind
 import org.http4k.routing.path
 import swami2020.api.Game
-import swami2020.api.request.CreateGameRequest
+import swami2020.api.request.CreateGame
 import swami2020.api.request.RequestHandler
 import swami2020.api.response.ID
 import swami2020.app.AppFactory
 import java.util.*
 
-class GameRoutes() : RequestHandler() {
+class GameRoutes : RequestHandler() {
 
     private lateinit var gameService: GameService
 
     private val gameListLens = Body.auto<Collection<Game>>().toLens()
     private val gameLens = Body.auto<Game>().toLens()
-    private val createGameLens = Body.auto<CreateGameRequest>().toLens()
+    private val createGameLens = Body.auto<CreateGame>().toLens()
 
     override fun setUp(factory: AppFactory) {
         super.setUp(factory)

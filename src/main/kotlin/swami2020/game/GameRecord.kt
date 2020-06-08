@@ -17,5 +17,4 @@ data class GameRecord(
         val selectionFavorite: Boolean,
         val selectionConference: String,
         val selectionScore: Int?
-) {
-}
+)

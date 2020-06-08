@@ -1,3 +1,3 @@
 package swami2020.exception
 
-class ItemNotFoundException : Exception() {}
+class ItemNotFoundException : Exception()

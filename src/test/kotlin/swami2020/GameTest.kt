@@ -7,15 +7,13 @@ import org.http4k.core.Status
 import org.http4k.format.Jackson.auto
 import org.junit.AfterClass
 import org.junit.BeforeClass
-import swami2020.api.request.LoginRequest
+import swami2020.api.request.Login
 import swami2020.api.Game
-import swami2020.api.request.CreateGameRequest
-import swami2020.api.request.CreateSelectionRequest
+import swami2020.api.request.CreateGame
+import swami2020.api.request.CreateSelection
 import java.util.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
 
 class GameTest : BaseTest() {
 
@@ -32,7 +30,7 @@ class GameTest : BaseTest() {
 
         private val gameListLens = Body.auto<Collection<Game>>().toLens()
         private val gameLens = Body.auto<Game>().toLens()
-        private val createGameLens = Body.auto<CreateGameRequest>().toLens()
+        private val createGameLens = Body.auto<CreateGame>().toLens()
 
         private val gamesUrl = "$urlBase/games"
 
@@ -46,14 +44,14 @@ class GameTest : BaseTest() {
 
             val gameService = TestUtil.appFactory.gameService
             val testGames = setOf(
-                    CreateGameRequest(
+                    CreateGame(
                             selections = setOf(
-                                    CreateSelectionRequest(
+                                    CreateSelection(
                                             team = iowa,
                                             favorite = true,
                                             home = false
                                     ),
-                                    CreateSelectionRequest(
+                                    CreateSelection(
                                             team = minnesota,
                                             favorite = false,
                                             home = true
@@ -64,14 +62,14 @@ class GameTest : BaseTest() {
                             week = week1,
                             spread = 42F
                     ),
-                    CreateGameRequest(
+                    CreateGame(
                             selections = setOf(
-                                    CreateSelectionRequest(
+                                    CreateSelection(
                                             team = nebraska,
                                             favorite = true,
                                             home = false
                                     ),
-                                    CreateSelectionRequest(
+                                    CreateSelection(
                                             team = usc,
                                             favorite = false,
                                             home = true
@@ -83,14 +81,14 @@ class GameTest : BaseTest() {
                             spread = 12F
                     ),
                     //Week 2
-                    CreateGameRequest(
+                    CreateGame(
                             selections = setOf(
-                                    CreateSelectionRequest(
+                                    CreateSelection(
                                             team = iowa,
                                             favorite = true,
                                             home = false
                                     ),
-                                    CreateSelectionRequest(
+                                    CreateSelection(
                                             team = usc,
                                             favorite = false,
                                             home = true
@@ -101,14 +99,14 @@ class GameTest : BaseTest() {
                             week = week2,
                             spread = 27.5F
                     ),
-                    CreateGameRequest(
+                    CreateGame(
                             selections = setOf(
-                                    CreateSelectionRequest(
+                                    CreateSelection(
                                             team = nebraska,
                                             favorite = true,
                                             home = false
                                     ),
-                                    CreateSelectionRequest(
+                                    CreateSelection(
                                             team = minnesota,
                                             favorite = false,
                                             home = true
@@ -129,7 +127,7 @@ class GameTest : BaseTest() {
             token = loginResponseLens(
                     client(
                             loginRequestLens(
-                                    LoginRequest(
+                                    Login(
                                             username = "test.user@testemail.com",
                                             password = "P@ssw0rd1"
                                     ),
@@ -200,14 +198,14 @@ class GameTest : BaseTest() {
         val games = gameListLens(actual)
         assertEquals(0, games.size)
 
-        val request = CreateGameRequest(
+        val request = CreateGame(
                 selections = setOf(
-                        CreateSelectionRequest(
+                        CreateSelection(
                                 team = iowa,
                                 favorite = true,
                                 home = false
                         ),
-                        CreateSelectionRequest(
+                        CreateSelection(
                                 team = usc,
                                 favorite = false,
                                 home = true
@@ -260,7 +258,7 @@ class GameTest : BaseTest() {
 //    }
 
     @Test
-    fun testGameSecured() {
+    fun gameListSecured() {
         val actual = client(Request(Method.GET, gamesUrl))
         assertEquals(Status.UNAUTHORIZED, actual.status)
     }

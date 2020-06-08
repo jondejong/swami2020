@@ -8,4 +8,4 @@ data class Selection(
         val home: Boolean,
         val favorite: Boolean,
         val score: Int?
-) {}
+)

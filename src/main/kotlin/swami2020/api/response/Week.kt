@@ -8,14 +8,14 @@ data class Week(
         val ready: Boolean,
         val complete: Boolean
 ) {
-     companion object {
-         val from = {week: com.jondejong.swami.model.tables.pojos.Week ->
+    companion object {
+        val from = { week: com.jondejong.swami.model.tables.pojos.Week ->
             Week(
                     id = UUID.fromString(week.id),
                     number = week.number,
                     ready = week.ready,
                     complete = week.complete
             )
-         }
-     }
+        }
+    }
 }

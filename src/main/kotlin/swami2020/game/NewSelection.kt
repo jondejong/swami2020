@@ -1,6 +1,6 @@
 package swami2020.game
 
-import swami2020.api.request.CreateSelectionRequest
+import swami2020.api.request.CreateSelection
 import java.util.*
 
 data class NewSelection(
@@ -11,7 +11,7 @@ data class NewSelection(
         val favorite: Boolean
 ) {
     companion object {
-        val from = { game: UUID, request: CreateSelectionRequest ->
+        val from = { game: UUID, request: CreateSelection ->
             NewSelection(
                     id = UUID.randomUUID(),
                     game = game,
