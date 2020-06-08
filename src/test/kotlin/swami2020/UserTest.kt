@@ -53,7 +53,7 @@ class UserTest: BaseTest() {
     }
 
     @Test
-    fun testUserUpdates() {
+    fun userUpdates() {
         val firstListResponse = client(SecureRequest(Method.GET, usersUrl, token))
         assertEquals(Status.OK, firstListResponse.status)
 
@@ -127,7 +127,7 @@ class UserTest: BaseTest() {
     }
 
     @Test
-    fun testUsersFetch() {
+    fun fetchUsers() {
         val resp = client(SecureRequest(Method.GET, "$usersUrl/${expectedUser.id}", token))
         assertEquals(Status.OK, resp.status)
 
@@ -136,19 +136,19 @@ class UserTest: BaseTest() {
     }
 
     @Test
-    fun testUserNotFound() {
+    fun userNotFound() {
         val resp = client(SecureRequest(Method.GET, "$usersUrl/${UUID.randomUUID()}", token))
         assertEquals(Status.NOT_FOUND, resp.status)
     }
 
     @Test
-    fun testListSecured() {
+    fun userListSecured() {
         val resp = client(Request(Method.GET, "$usersUrl"))
         assertEquals(Status.UNAUTHORIZED, resp.status)
     }
 
     @Test
-    fun testFetchSecured() {
+    fun userFetchSecured() {
         val resp = client(Request(Method.GET, "$usersUrl/${UUID.randomUUID()}"))
         assertEquals(Status.UNAUTHORIZED, resp.status)
     }
