@@ -23,7 +23,7 @@ object TestUtil {
 
     private val app = App(appFactory)
 
-    val start = {app.start()}
-    val stop = {app.stop()}
+    val start = { app.start() }
+    val stop = { app.stop() }
 
 }

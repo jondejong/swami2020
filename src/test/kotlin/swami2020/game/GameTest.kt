@@ -10,10 +10,10 @@ import org.junit.BeforeClass
 import swami2020.BaseTest
 import swami2020.SecureRequest
 import swami2020.TestUtil
-import swami2020.api.request.Login
 import swami2020.api.Game
 import swami2020.api.request.CreateGame
 import swami2020.api.request.CreateSelection
+import swami2020.api.request.Login
 import java.util.*
 import kotlin.test.Test
 import kotlin.test.assertEquals

@@ -22,6 +22,31 @@ class WeekRepository : SwamiRepository() {
         }
     }
 
+    fun fetchReadyNotCompleted(): Collection<Week> {
+        context.use { context ->
+            return weekContextMapper(context)
+                    .where(WEEK.READY.eq(true))
+                    .and(WEEK.COMPLETE.eq(false))
+                    .fetchInto(Week::class.java)
+        }
+    }
+
+    fun fetchCompleted(): Collection<Week> {
+        context.use { context ->
+            return weekContextMapper(context)
+                    .where(WEEK.COMPLETE.eq(true))
+                    .fetchInto(Week::class.java)
+        }
+    }
+
+    fun fetchByNumber(number: Int): Collection<Week> {
+        context.use { context ->
+            return weekContextMapper(context)
+                    .where(WEEK.NUMBER.eq(number))
+                    .fetchInto(Week::class.java)
+        }
+    }
+
     fun create(week: Week) {
         context.use { context ->
             context.insertInto(
