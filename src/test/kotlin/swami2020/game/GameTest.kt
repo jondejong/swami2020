@@ -1,4 +1,4 @@
-package swami2020
+package swami2020.game
 
 import org.http4k.core.Body
 import org.http4k.core.Method
@@ -7,6 +7,9 @@ import org.http4k.core.Status
 import org.http4k.format.Jackson.auto
 import org.junit.AfterClass
 import org.junit.BeforeClass
+import swami2020.BaseTest
+import swami2020.SecureRequest
+import swami2020.TestUtil
 import swami2020.api.request.Login
 import swami2020.api.Game
 import swami2020.api.request.CreateGame
@@ -152,7 +155,7 @@ class GameTest : BaseTest() {
 
     @Test
     fun listGamesByWeek() {
-        val actual = client(SecureRequest(Method.GET, "$gamesUrl/week/${week2}", token))
+        val actual = client(SecureRequest(Method.GET, "$gamesUrl/week/$week2", token))
         assertEquals(Status.OK, actual.status)
 
         val games = gameListLens(actual)
@@ -192,7 +195,7 @@ class GameTest : BaseTest() {
 
     @Test
     fun createAndDeleteGame() {
-        val actual = client(SecureRequest(Method.GET, "$gamesUrl/week/${week3}", token))
+        val actual = client(SecureRequest(Method.GET, "$gamesUrl/week/$week3", token))
         assertEquals(Status.OK, actual.status)
 
         val games = gameListLens(actual)
@@ -232,7 +235,7 @@ class GameTest : BaseTest() {
                         client(
                                 SecureRequest(
                                         Method.GET,
-                                        "$gamesUrl/week/${week3}",
+                                        "$gamesUrl/week/$week3",
                                         token
                                 )
                         )

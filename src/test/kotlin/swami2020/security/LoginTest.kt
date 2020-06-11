@@ -1,10 +1,11 @@
-package swami2020
+package swami2020.security
 
 import org.http4k.core.Body
 import org.http4k.core.Method
 import org.http4k.core.Request
 import org.http4k.core.Status
 import org.http4k.format.Jackson.auto
+import swami2020.BaseTest
 import swami2020.api.request.Login
 import swami2020.api.response.User
 import java.util.*

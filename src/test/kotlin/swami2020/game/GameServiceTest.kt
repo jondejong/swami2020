@@ -1,7 +1,8 @@
-package swami2020
+package swami2020.game
 
-import swami2020.game.GameService
 import org.junit.BeforeClass
+import swami2020.BaseTest
+import swami2020.TestUtil
 import swami2020.api.request.CreateGame
 import swami2020.api.request.CreateSelection
 import swami2020.exception.ItemNotFoundException

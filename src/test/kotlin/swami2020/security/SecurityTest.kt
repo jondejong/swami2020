@@ -1,4 +1,4 @@
-package swami2020
+package swami2020.security
 
 import swami2020.security.Password
 import kotlin.test.*
