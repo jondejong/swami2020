@@ -9,7 +9,8 @@ import swami2020.BaseTest
 import swami2020.api.request.Login
 import swami2020.api.response.User
 import java.util.*
-import kotlin.test.*
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
 class LoginTest : BaseTest() {
 

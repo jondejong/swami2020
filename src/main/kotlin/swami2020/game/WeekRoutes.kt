@@ -21,6 +21,7 @@ class WeekRoutes : RequestHandler() {
     private val updateWeekReadyLens = Body.auto<UpdateWeekReady>().toLens()
     private val createWeekLens = Body.auto<CreateWeek>().toLens()
     private val weekListLens = Body.auto<Collection<Week>>().toLens()
+    private val weekLens = Body.auto<Week>().toLens()
 
     override fun setUp(factory: AppFactory) {
         super.setUp(factory)
@@ -31,6 +32,10 @@ class WeekRoutes : RequestHandler() {
         weekListLens(weekService.list().map {
             Week.from(it)
         }, Response(Status.OK))
+    }
+
+    private val currentWeekHandler = { _: Request ->
+        weekLens(Week.from(weekService.fetchCurrent()), Response(Status.OK))
     }
 
     private val createWeekHandler = { request: Request ->
@@ -59,6 +64,7 @@ class WeekRoutes : RequestHandler() {
     val routes = org.http4k.routing.routes(
             "/" bind Method.GET to weekListHandler,
             "/" bind Method.POST to createWeekHandler,
+            "/current" bind Method.GET to currentWeekHandler,
             "/{id:.*}/ready" bind Method.PUT to updateReadyHandler,
             "/{id:.*}/complete" bind Method.PUT to updateCompleteHandler
     )

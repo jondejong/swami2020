@@ -12,13 +12,9 @@ import swami2020.api.request.CreateUser
 import swami2020.api.request.Login
 import swami2020.api.response.User
 import java.util.*
-import kotlin.test.assertEquals
-import kotlin.test.assertNotEquals
-import kotlin.test.assertNotNull
-import kotlin.test.assertTrue
 import kotlin.test.*
 
-class UserTest: BaseTest() {
+class UserTest : BaseTest() {
 
     private val userLens = Body.auto<User>().toLens()
     private val userListLens = Body.auto<Collection<User>>().toLens()

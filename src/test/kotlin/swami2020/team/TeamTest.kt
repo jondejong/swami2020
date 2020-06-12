@@ -15,7 +15,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
-class TeamTest: BaseTest() {
+class TeamTest : BaseTest() {
 
     private val teamLens = Body.auto<Team>().toLens()
     private val teamListLens = Body.auto<Collection<Team>>().toLens()
