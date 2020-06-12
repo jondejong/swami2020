@@ -10,19 +10,19 @@ class WeekServiceTest : BaseWeekTest() {
     @Test
     fun fetchByNumber() {
         assertEquals(
-                expected = ids[1],
+                expected = weekIds[1],
                 actual = UUID.fromString(
                         TestUtil.appFactory.weekService.fetchByNumber(1).id
                 )
         )
         assertEquals(
-                expected = ids[2],
+                expected = weekIds[2],
                 actual = UUID.fromString(
                         TestUtil.appFactory.weekService.fetchByNumber(2).id
                 )
         )
         assertEquals(
-                expected = ids[3],
+                expected = weekIds[3],
                 actual = UUID.fromString(
                         TestUtil.appFactory.weekService.fetchByNumber(3).id
                 )

@@ -7,7 +7,6 @@ import com.jondejong.swami.model.tables.Team.TEAM
 import com.jondejong.swami.model.tables.Week.WEEK
 import org.jooq.DSLContext
 import swami2020.app.SwamiRepository
-import swami2020.exception.ItemNotFoundException
 
 class GameRepository : SwamiRepository() {
 
@@ -22,6 +21,7 @@ class GameRepository : SwamiRepository() {
                 SELECTION.ID.`as`("selectionId"),
                 SELECTION.HOME.`as`("selectionHome"),
                 SELECTION.FAVORITE.`as`("selectionFavorite"),
+                SELECTION.SCORE.`as`("selectionScore"),
                 TEAM.ID.`as`("selectionTeamId"),
                 TEAM.NAME.`as`("selectionTeamName"),
                 TEAM.NICK_NAME.`as`("selectionTeamNickName"),
@@ -61,13 +61,18 @@ class GameRepository : SwamiRepository() {
 
     fun fetch(id: String): Collection<GameRecord> {
         context.use { context ->
-            val gamesRecords = gameContextMapper(context).where(GAME.ID.eq(id))
+            return gameContextMapper(context).where(GAME.ID.eq(id))
                     .fetchInto((GameRecord::class.java))
 
-            if (gamesRecords?.size != 2) {
-                throw ItemNotFoundException()
-            }
-            return gamesRecords
+        }
+    }
+
+    fun completeGame(id: String) {
+        context.use { context ->
+            context.update(GAME)
+                    .set(GAME.COMPLETE, true).where(GAME.ID.eq(id))
+                    .execute()
+
         }
     }
 

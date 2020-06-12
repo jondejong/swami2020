@@ -38,7 +38,7 @@ val selectionFrom = { gameRecord: GameRecord ->
             favorite = gameRecord.selectionFavorite,
             home = gameRecord.selectionHome,
             team = teamFrom(gameRecord),
-            score = null
+            score = gameRecord.selectionScore
     )
 }
 
