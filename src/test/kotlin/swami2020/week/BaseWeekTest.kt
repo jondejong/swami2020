@@ -19,12 +19,6 @@ open class BaseWeekTest : BaseTest() {
 
     companion object {
 
-        val ids = mapOf<Int, UUID>(
-                1 to UUID.fromString("7cbdd6bf-7545-4091-a227-4f29450632d7"),
-                2 to UUID.fromString("3d581ea2-b3c8-4576-87df-683eb4abd8ee"),
-                3 to UUID.fromString("232a5c59-8a23-4917-a4cf-7f0d367cb4ad")
-        )
-
         val updateWeekCompleteLens = Body.auto<UpdateWeekComplete>().toLens()
         val updateWeekReadyLens = Body.auto<UpdateWeekReady>().toLens()
         val createWeekLens = Body.auto<CreateWeek>().toLens()

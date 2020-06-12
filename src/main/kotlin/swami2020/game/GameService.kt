@@ -2,11 +2,13 @@ package swami2020.game
 
 import jdk.jshell.spi.ExecutionControl
 import swami2020.api.Game
+import swami2020.api.request.CompleteGame
 import swami2020.api.request.CreateGame
 import swami2020.api.response.builder.RecordGroup
 import swami2020.api.response.builder.gameFrom
 import swami2020.app.AppFactory
 import swami2020.app.SwamiConfigurable
+import swami2020.exception.ItemNotFoundException
 import java.util.*
 import kotlin.collections.HashMap
 
@@ -52,7 +54,24 @@ class GameService : SwamiConfigurable {
     }
 
     fun fetch(id: UUID): Game {
-        return processRecords(gameRepository.fetch(id.toString())).first()
+        val records = gameRepository.fetch((id.toString()))
+        if (records.size != 2) {
+            throw ItemNotFoundException()
+        }
+        return processRecords(records).first()
+    }
+
+    fun completeGame(gameId: UUID, completeGame: CompleteGame) {
+        // Validate the game exists
+        fetch(gameId)
+
+        gameRepository.completeGame(gameId.toString())
+        completeGame.selectionScores.map {
+            selectionRepository.setScore(
+                    id = it.selection.toString(),
+                    score = it.score
+            )
+        }
     }
 
     private fun processRecords(records: Collection<GameRecord>): Collection<Game> {

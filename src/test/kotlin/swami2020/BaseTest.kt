@@ -7,9 +7,16 @@ import org.junit.AfterClass
 import org.junit.BeforeClass
 import swami2020.api.response.ID
 import swami2020.app.AppFactory
+import java.util.*
 
 open class BaseTest {
     companion object {
+
+        val weekIds = mapOf<Int, UUID>(
+                1 to UUID.fromString("7cbdd6bf-7545-4091-a227-4f29450632d7"),
+                2 to UUID.fromString("3d581ea2-b3c8-4576-87df-683eb4abd8ee"),
+                3 to UUID.fromString("232a5c59-8a23-4917-a4cf-7f0d367cb4ad")
+        )
 
         // Application under test
         @BeforeClass

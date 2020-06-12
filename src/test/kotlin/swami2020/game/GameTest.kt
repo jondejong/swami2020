@@ -11,9 +11,7 @@ import swami2020.BaseTest
 import swami2020.SecureRequest
 import swami2020.TestUtil
 import swami2020.api.Game
-import swami2020.api.request.CreateGame
-import swami2020.api.request.CreateSelection
-import swami2020.api.request.Login
+import swami2020.api.request.*
 import java.util.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -21,10 +19,6 @@ import kotlin.test.assertEquals
 class GameTest : BaseTest() {
 
     companion object {
-
-        val week1 = UUID.fromString("7cbdd6bf-7545-4091-a227-4f29450632d7")
-        val week2 = UUID.fromString("3d581ea2-b3c8-4576-87df-683eb4abd8ee")
-        val week3 = UUID.fromString("232a5c59-8a23-4917-a4cf-7f0d367cb4ad")
 
         val iowa = UUID.fromString("9579145e-1946-4f42-9c47-42fefb4eb8e6")
         val minnesota = UUID.fromString("fc623823-a492-4264-a960-8d5053d16f08")
@@ -34,9 +28,11 @@ class GameTest : BaseTest() {
         private val gameListLens = Body.auto<Collection<Game>>().toLens()
         private val gameLens = Body.auto<Game>().toLens()
         private val createGameLens = Body.auto<CreateGame>().toLens()
+        private val completeGameLens = Body.auto<CompleteGame>().toLens()
 
         private val gamesUrl = "$urlBase/games"
 
+        lateinit var expectedGame: Game
         lateinit var token: String
 
         // TODO: Create games for a week
@@ -62,7 +58,7 @@ class GameTest : BaseTest() {
                             ),
                             complete = false,
                             cancelled = false,
-                            week = week1,
+                            week = weekIds[1]!!,
                             spread = 42F
                     ),
                     CreateGame(
@@ -80,7 +76,7 @@ class GameTest : BaseTest() {
                             ),
                             complete = false,
                             cancelled = false,
-                            week = week1,
+                            week = weekIds[1]!!,
                             spread = 12F
                     ),
                     //Week 2
@@ -99,7 +95,7 @@ class GameTest : BaseTest() {
                             ),
                             complete = false,
                             cancelled = false,
-                            week = week2,
+                            week = weekIds[2]!!,
                             spread = 27.5F
                     ),
                     CreateGame(
@@ -117,15 +113,16 @@ class GameTest : BaseTest() {
                             ),
                             complete = false,
                             cancelled = false,
-                            week = week2,
+                            week = weekIds[2]!!,
                             spread = 24F
                     )
             )
 
             testGames.map { gameService.create(it) }
+            expectedGame = TestUtil.appFactory.gameService.listByWeek(weekIds[1]!!).first()
         }
 
-        fun authenticate() {
+        private fun authenticate() {
             // Login
             token = loginResponseLens(
                     client(
@@ -144,18 +141,25 @@ class GameTest : BaseTest() {
         @JvmStatic
         fun destroy() {
             //TODO: Destroy the games that were created for the tests
-            setOf<UUID>(week1, week2, week3).map {
+            setOf<UUID>(weekIds[1]!!, weekIds[2]!!, weekIds[3]!!).map {
                 TestUtil.appFactory.gameService.listByWeek(it).map {
                     TestUtil.appFactory.gameService.delete(it.id)
                 }
             }
         }
 
+        fun generateCompleteGameRequest(homeTeamScore: Int, visitingTeamScore: Int): CompleteGame {
+            return CompleteGame(
+                    expectedGame.selections.map {
+                        if (it.home) SelectionScore(it.id, homeTeamScore) else SelectionScore(it.id, visitingTeamScore)
+                    }
+            )
+        }
     }
 
     @Test
     fun listGamesByWeek() {
-        val actual = client(SecureRequest(Method.GET, "$gamesUrl/week/$week2", token))
+        val actual = client(SecureRequest(Method.GET, "$gamesUrl/week/${weekIds[2]}", token))
         assertEquals(Status.OK, actual.status)
 
         val games = gameListLens(actual)
@@ -167,7 +171,7 @@ class GameTest : BaseTest() {
                     actual = it.week
             )
             assertEquals(
-                    expected = week2,
+                    expected = weekIds[2]!!,
                     actual = it.weekId
             )
         }
@@ -175,13 +179,12 @@ class GameTest : BaseTest() {
 
     @Test
     fun fetchGame() {
-        val id = TestUtil.appFactory.gameService.listByWeek(week1).first().id
-        val actual = client(SecureRequest(Method.GET, "$gamesUrl/${id}", token))
+        val actual = client(SecureRequest(Method.GET, "$gamesUrl/${expectedGame.id}", token))
         assertEquals(Status.OK, actual.status)
 
         val actualGame = gameLens(actual)
         assertEquals(
-                expected = id,
+                expected = expectedGame.id,
                 actual = actualGame.id
         )
     }
@@ -195,7 +198,7 @@ class GameTest : BaseTest() {
 
     @Test
     fun createAndDeleteGame() {
-        val actual = client(SecureRequest(Method.GET, "$gamesUrl/week/$week3", token))
+        val actual = client(SecureRequest(Method.GET, "$gamesUrl/week/${weekIds[3]}", token))
         assertEquals(Status.OK, actual.status)
 
         val games = gameListLens(actual)
@@ -216,7 +219,7 @@ class GameTest : BaseTest() {
                 ),
                 complete = false,
                 cancelled = false,
-                week = week3,
+                week = weekIds[3]!!,
                 spread = 27.5F
         )
 
@@ -235,7 +238,7 @@ class GameTest : BaseTest() {
                         client(
                                 SecureRequest(
                                         Method.GET,
-                                        "$gamesUrl/week/$week3",
+                                        "$gamesUrl/week/${weekIds[3]}",
                                         token
                                 )
                         )
@@ -243,18 +246,66 @@ class GameTest : BaseTest() {
         )
     }
 
-//    TODO: implement these as the features are developed
+    @Test
+    fun completeGame() {
+        val homeTeamScore = 42
+        val visitingTeamScore = 14
+        val response = client(
+                completeGameLens(
+                        generateCompleteGameRequest(
+                                homeTeamScore = homeTeamScore,
+                                visitingTeamScore = visitingTeamScore
+                        ),
+                        SecureRequest(Method.PUT, "$gamesUrl/${expectedGame.id}/score", token)
+                )
+        )
 
-//    @Test
-//    fun addScore() {
-//        assertTrue(false, "Implement me")
-//    }
-//
-//    @Test
-//    fun updateScore() {
-//        assertTrue(false, "Implement me")
-//    }
-//
+        assertEquals(
+                expected = Status.OK,
+                actual = response.status
+        )
+
+        val actual = gameLens(
+                client(
+                        SecureRequest(Method.GET, "$gamesUrl/${expectedGame.id}", token)
+                )
+        )
+        assertEquals(
+                expected = true,
+                actual = actual.complete
+        )
+
+        actual.selections.map {
+            assertEquals(
+                    expected = if (it.home) homeTeamScore else visitingTeamScore,
+                    actual = it.score
+            )
+        }
+    }
+
+    @Test
+    fun completeGameThatDoesNotExist() {
+        val homeTeamScore = 42
+        val visitingTeamScore = 14
+        val response = client(
+                completeGameLens(
+                        generateCompleteGameRequest(
+                                homeTeamScore = homeTeamScore,
+                                visitingTeamScore = visitingTeamScore
+                        ),
+                        SecureRequest(Method.PUT, "$gamesUrl/${UUID.randomUUID()}/score", token)
+                )
+        )
+
+        assertEquals(
+                expected = Status.NOT_FOUND,
+                actual = response.status
+        )
+
+    }
+
+
+//    TODO: Implement this feature
 //    @Test
 //    fun cancelGame() {
 //        assertTrue(false, "Implement me")

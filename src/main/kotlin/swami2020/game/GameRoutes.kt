@@ -5,6 +5,7 @@ import org.http4k.format.Jackson.auto
 import org.http4k.routing.bind
 import org.http4k.routing.path
 import swami2020.api.Game
+import swami2020.api.request.CompleteGame
 import swami2020.api.request.CreateGame
 import swami2020.api.request.RequestHandler
 import swami2020.api.response.ID
@@ -18,6 +19,7 @@ class GameRoutes : RequestHandler() {
     private val gameListLens = Body.auto<Collection<Game>>().toLens()
     private val gameLens = Body.auto<Game>().toLens()
     private val createGameLens = Body.auto<CreateGame>().toLens()
+    private val completeGameLens = Body.auto<CompleteGame>().toLens()
 
     override fun setUp(factory: AppFactory) {
         super.setUp(factory)
@@ -48,11 +50,21 @@ class GameRoutes : RequestHandler() {
         )
     }
 
+    private val completeGameHandler = { request: Request ->
+        gameService.completeGame(
+                gameId = UUID.fromString(request.path("id")),
+                completeGame = completeGameLens(request)
+        )
+
+        Response(Status.OK)
+    }
+
     val routes = org.http4k.routing.routes(
             "/" bind Method.GET to gameListHandler,
             "/" bind Method.POST to createGameHandler,
             "/week/{id:.*}" bind Method.GET to gamesByWeekHandler,
             "/{id:.*}" bind Method.DELETE to deleteGameHandler,
-            "/{id:.*}" bind Method.GET to fetchGameHandler
+            "/{id:.*}" bind Method.GET to fetchGameHandler,
+            "/{id:.*}/score" bind Method.PUT to completeGameHandler
     )
 }

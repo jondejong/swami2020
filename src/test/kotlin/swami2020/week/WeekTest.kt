@@ -46,14 +46,14 @@ class WeekTest : BaseWeekTest() {
                 actual = client(
                         updateWeekCompleteLens(
                                 UpdateWeekComplete(true),
-                                SecureRequest(Method.PUT, "$weeksUrl/${ids[1]}/complete", token)
+                                SecureRequest(Method.PUT, "$weeksUrl/${weekIds[1]}/complete", token)
                         )
                 ).status
         )
 
         var found = false
         weekListLens(client(SecureRequest(Method.GET, weeksUrl, token))).map {
-            if (it.id == ids[1]) {
+            if (it.id == weekIds[1]) {
                 found = true
                 assertTrue(it.complete)
             }
@@ -68,7 +68,7 @@ class WeekTest : BaseWeekTest() {
                 actual = client(
                         updateWeekReadyLens(
                                 UpdateWeekReady(true),
-                                SecureRequest(Method.PUT, "$weeksUrl/${ids[1]}/ready", token)
+                                SecureRequest(Method.PUT, "$weeksUrl/${weekIds[1]}/ready", token)
                         )
                 ).status
         )
@@ -76,7 +76,7 @@ class WeekTest : BaseWeekTest() {
         var found = false
         val weeks = weekListLens(client(SecureRequest(Method.GET, weeksUrl, token)))
         weeks.map {
-            if (it.id == ids[1]) {
+            if (it.id == weekIds[1]) {
                 found = true
                 assertTrue(it.ready)
             }

@@ -31,4 +31,13 @@ class SelectionRepository : SwamiRepository() {
                     .execute()
         }
     }
+
+    fun setScore(id: String, score: Int) {
+        context.use { context ->
+            context.update(SELECTION)
+                    .set(SELECTION.SCORE, score)
+                    .where(SELECTION.ID.eq(id))
+                    .execute()
+        }
+    }
 }

@@ -20,16 +20,16 @@ class CurrentWeekTest : BaseWeekTest() {
             cleanUp()
             for (number in 1.until(week)) {
                 service.updateReady(
-                        id = ids[number]!!,
+                        id = weekIds[number]!!,
                         status = true
                 )
                 service.updateComplete(
-                        id = ids[number]!!,
+                        id = weekIds[number]!!,
                         status = true
                 )
             }
             service.updateReady(
-                    id = ids[week]!!,
+                    id = weekIds[week]!!,
                     status = true
             )
         }
@@ -39,11 +39,11 @@ class CurrentWeekTest : BaseWeekTest() {
             cleanUp()
             for (number in 1.until(week + 1)) {
                 service.updateReady(
-                        id = ids[number]!!,
+                        id = weekIds[number]!!,
                         status = true
                 )
                 service.updateComplete(
-                        id = ids[number]!!,
+                        id = weekIds[number]!!,
                         status = true
                 )
             }
@@ -61,7 +61,7 @@ class CurrentWeekTest : BaseWeekTest() {
         )
 
         assertEquals(
-                expected = ids[2],
+                expected = weekIds[2],
                 actual = weekLens(response).id
         )
     }
@@ -77,7 +77,7 @@ class CurrentWeekTest : BaseWeekTest() {
         )
 
         assertEquals(
-                expected = ids[3],
+                expected = weekIds[3],
                 actual = weekLens(response).id
         )
     }
