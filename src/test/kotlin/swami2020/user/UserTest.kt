@@ -5,11 +5,9 @@ import org.http4k.core.Method
 import org.http4k.core.Request
 import org.http4k.core.Status
 import org.http4k.format.Jackson.auto
-import org.junit.BeforeClass
 import swami2020.BaseTest
 import swami2020.SecureRequest
 import swami2020.api.request.CreateUser
-import swami2020.api.request.Login
 import swami2020.api.response.User
 import java.util.*
 import kotlin.test.*
@@ -23,8 +21,6 @@ class UserTest : BaseTest() {
 
     companion object {
 
-        lateinit var token: String
-
         val expectedUser = User(
                 UUID.fromString("49c4db64-acd1-431f-b013-7f35895ec85b"),
                 "Test",
@@ -32,22 +28,6 @@ class UserTest : BaseTest() {
                 "test.user@testemail.com"
         )
 
-        @BeforeClass
-        @JvmStatic
-        fun authenticate() {
-            // Login
-            token = loginResponseLens(
-                    client(
-                            loginRequestLens(
-                                    Login(
-                                            username = expectedUser.email,
-                                            password = "P@ssw0rd1"
-                                    ),
-                                    Request(Method.POST, loginUrl)
-                            )
-                    )
-            ).token
-        }
     }
 
     @Test

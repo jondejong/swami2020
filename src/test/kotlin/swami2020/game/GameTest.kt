@@ -11,7 +11,10 @@ import swami2020.BaseTest
 import swami2020.SecureRequest
 import swami2020.TestUtil
 import swami2020.api.Game
-import swami2020.api.request.*
+import swami2020.api.request.CompleteGame
+import swami2020.api.request.CreateGame
+import swami2020.api.request.CreateSelection
+import swami2020.api.request.SelectionScore
 import java.util.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -33,13 +36,12 @@ class GameTest : BaseTest() {
         private val gamesUrl = "$urlBase/games"
 
         lateinit var expectedGame: Game
-        lateinit var token: String
 
         // TODO: Create games for a week
         @BeforeClass
         @JvmStatic
         fun createGames() {
-            authenticate()
+            println("starting concrete test setup")
 
             val gameService = TestUtil.appFactory.gameService
             val testGames = setOf(
@@ -120,21 +122,7 @@ class GameTest : BaseTest() {
 
             testGames.map { gameService.create(it) }
             expectedGame = TestUtil.appFactory.gameService.listByWeek(weekIds[1]!!).first()
-        }
-
-        private fun authenticate() {
-            // Login
-            token = loginResponseLens(
-                    client(
-                            loginRequestLens(
-                                    Login(
-                                            username = "test.user@testemail.com",
-                                            password = "P@ssw0rd1"
-                                    ),
-                                    Request(Method.POST, loginUrl)
-                            )
-                    )
-            ).token
+            println("completed concrete test setup")
         }
 
         @AfterClass
