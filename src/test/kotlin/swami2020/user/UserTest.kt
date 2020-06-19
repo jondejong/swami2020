@@ -32,7 +32,7 @@ class UserTest : BaseTest() {
 
     @Test
     fun userUpdates() {
-        val firstListResponse = client(SecureRequest(Method.GET, usersUrl, token))
+        val firstListResponse = client(SecureRequest(Method.GET, usersUrl, userToken))
         assertEquals(Status.OK, firstListResponse.status)
 
         val users = userListLens(firstListResponse)
@@ -55,7 +55,7 @@ class UserTest : BaseTest() {
         val createResponse = client(
                 createUserLens(
                         createUser,
-                        SecureRequest(Method.POST, usersUrl, token)
+                        SecureRequest(Method.POST, usersUrl, userToken)
                 )
         )
 
@@ -67,7 +67,7 @@ class UserTest : BaseTest() {
         assertEquals("Tester", newUser.lastName)
         assertEquals("jonny.tester@testemail.com", newUser.email)
 
-        val postCreateListResponse = client(SecureRequest(Method.GET, usersUrl, token))
+        val postCreateListResponse = client(SecureRequest(Method.GET, usersUrl, userToken))
         assertEquals(Status.OK, postCreateListResponse.status)
         val postCreateUsers = userListLens(postCreateListResponse)
 
@@ -90,10 +90,10 @@ class UserTest : BaseTest() {
 
         assertTrue(found, "Newly created user not found")
 
-        val deleteResponse = client(SecureRequest(Method.DELETE, "$usersUrl/${newUser.id}", token))
+        val deleteResponse = client(SecureRequest(Method.DELETE, "$usersUrl/${newUser.id}", userToken))
         assertEquals(Status.OK, deleteResponse.status)
 
-        val finalListResponse = client(SecureRequest(Method.GET, usersUrl, token))
+        val finalListResponse = client(SecureRequest(Method.GET, usersUrl, userToken))
         assertEquals(Status.OK, finalListResponse.status)
 
         val finalUsers = userListLens(finalListResponse)
@@ -106,7 +106,7 @@ class UserTest : BaseTest() {
 
     @Test
     fun fetchUsers() {
-        val resp = client(SecureRequest(Method.GET, "$usersUrl/${expectedUser.id}", token))
+        val resp = client(SecureRequest(Method.GET, "$usersUrl/${expectedUser.id}", userToken))
         assertEquals(Status.OK, resp.status)
 
         val actualUser = userLens(resp)
@@ -115,7 +115,7 @@ class UserTest : BaseTest() {
 
     @Test
     fun userNotFound() {
-        val resp = client(SecureRequest(Method.GET, "$usersUrl/${UUID.randomUUID()}", token))
+        val resp = client(SecureRequest(Method.GET, "$usersUrl/${UUID.randomUUID()}", userToken))
         assertEquals(Status.NOT_FOUND, resp.status)
     }
 

@@ -15,7 +15,7 @@ class WeekTest : BaseWeekTest() {
 
     @Test
     fun createAndListWeeks() {
-        val actual = client(SecureRequest(Method.GET, weeksUrl, token))
+        val actual = client(SecureRequest(Method.GET, weeksUrl, userToken))
         assertEquals(Status.OK, actual.status)
 
         val weeks = weekListLens(actual)
@@ -26,7 +26,7 @@ class WeekTest : BaseWeekTest() {
                 actual = client(
                         createWeekLens(
                                 CreateWeek(6),
-                                SecureRequest(Method.POST, weeksUrl, token)
+                                SecureRequest(Method.POST, weeksUrl, userToken)
                         )
                 ).status
         )
@@ -34,7 +34,7 @@ class WeekTest : BaseWeekTest() {
         assertEquals(
                 expected = 6,
                 actual = weekListLens(
-                        client(SecureRequest(Method.GET, weeksUrl, token))
+                        client(SecureRequest(Method.GET, weeksUrl, userToken))
                 ).size
         )
     }
@@ -46,13 +46,13 @@ class WeekTest : BaseWeekTest() {
                 actual = client(
                         updateWeekCompleteLens(
                                 UpdateWeekComplete(true),
-                                SecureRequest(Method.PUT, "$weeksUrl/${weekIds[1]}/complete", token)
+                                SecureRequest(Method.PUT, "$weeksUrl/${weekIds[1]}/complete", userToken)
                         )
                 ).status
         )
 
         var found = false
-        weekListLens(client(SecureRequest(Method.GET, weeksUrl, token))).map {
+        weekListLens(client(SecureRequest(Method.GET, weeksUrl, userToken))).map {
             if (it.id == weekIds[1]) {
                 found = true
                 assertTrue(it.complete)
@@ -68,13 +68,13 @@ class WeekTest : BaseWeekTest() {
                 actual = client(
                         updateWeekReadyLens(
                                 UpdateWeekReady(true),
-                                SecureRequest(Method.PUT, "$weeksUrl/${weekIds[1]}/ready", token)
+                                SecureRequest(Method.PUT, "$weeksUrl/${weekIds[1]}/ready", userToken)
                         )
                 ).status
         )
 
         var found = false
-        val weeks = weekListLens(client(SecureRequest(Method.GET, weeksUrl, token)))
+        val weeks = weekListLens(client(SecureRequest(Method.GET, weeksUrl, userToken)))
         weeks.map {
             if (it.id == weekIds[1]) {
                 found = true
