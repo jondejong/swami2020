@@ -147,7 +147,7 @@ class GameTest : BaseTest() {
 
     @Test
     fun listGamesByWeek() {
-        val actual = client(SecureRequest(Method.GET, "$gamesUrl/week/${weekIds[2]}", token))
+        val actual = client(SecureRequest(Method.GET, "$gamesUrl/week/${weekIds[2]}", userToken))
         assertEquals(Status.OK, actual.status)
 
         val games = gameListLens(actual)
@@ -167,7 +167,7 @@ class GameTest : BaseTest() {
 
     @Test
     fun fetchGame() {
-        val actual = client(SecureRequest(Method.GET, "$gamesUrl/${expectedGame.id}", token))
+        val actual = client(SecureRequest(Method.GET, "$gamesUrl/${expectedGame.id}", userToken))
         assertEquals(Status.OK, actual.status)
 
         val actualGame = gameLens(actual)
@@ -180,13 +180,13 @@ class GameTest : BaseTest() {
     @Test
     fun list() {
         // Not needed long term
-        val actual = client(SecureRequest(Method.GET, gamesUrl, token))
+        val actual = client(SecureRequest(Method.GET, gamesUrl, userToken))
         assertEquals(Status.OK, actual.status)
     }
 
     @Test
     fun createAndDeleteGame() {
-        val actual = client(SecureRequest(Method.GET, "$gamesUrl/week/${weekIds[3]}", token))
+        val actual = client(SecureRequest(Method.GET, "$gamesUrl/week/${weekIds[3]}", userToken))
         assertEquals(Status.OK, actual.status)
 
         val games = gameListLens(actual)
@@ -214,7 +214,7 @@ class GameTest : BaseTest() {
         val createResponse = client(
                 createGameLens(
                         request,
-                        SecureRequest(Method.POST, gamesUrl, token)
+                        SecureRequest(Method.POST, gamesUrl, userToken)
                 )
         )
 
@@ -227,7 +227,7 @@ class GameTest : BaseTest() {
                                 SecureRequest(
                                         Method.GET,
                                         "$gamesUrl/week/${weekIds[3]}",
-                                        token
+                                        userToken
                                 )
                         )
                 ).size
@@ -244,7 +244,7 @@ class GameTest : BaseTest() {
                                 homeTeamScore = homeTeamScore,
                                 visitingTeamScore = visitingTeamScore
                         ),
-                        SecureRequest(Method.PUT, "$gamesUrl/${expectedGame.id}/score", token)
+                        SecureRequest(Method.PUT, "$gamesUrl/${expectedGame.id}/score", userToken)
                 )
         )
 
@@ -255,7 +255,7 @@ class GameTest : BaseTest() {
 
         val actual = gameLens(
                 client(
-                        SecureRequest(Method.GET, "$gamesUrl/${expectedGame.id}", token)
+                        SecureRequest(Method.GET, "$gamesUrl/${expectedGame.id}", userToken)
                 )
         )
         assertEquals(
@@ -281,7 +281,7 @@ class GameTest : BaseTest() {
                                 homeTeamScore = homeTeamScore,
                                 visitingTeamScore = visitingTeamScore
                         ),
-                        SecureRequest(Method.PUT, "$gamesUrl/${UUID.randomUUID()}/score", token)
+                        SecureRequest(Method.PUT, "$gamesUrl/${UUID.randomUUID()}/score", userToken)
                 )
         )
 

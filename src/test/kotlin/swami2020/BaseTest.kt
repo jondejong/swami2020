@@ -15,7 +15,8 @@ import java.util.*
 open class BaseTest {
     companion object {
 
-        lateinit var token: String
+        lateinit var userToken: String
+        lateinit var adminToken: String
 
         val usersPath = "users"
         val teamsPath = "teams"
@@ -24,7 +25,6 @@ open class BaseTest {
         val loginRequestLens = Body.auto<swami2020.api.request.Login>().toLens()
         val loginResponseLens = Body.auto<swami2020.api.response.Login>().toLens()
         val client = OkHttp()
-
 
         val server = "http://localhost"
         val urlBase = "$server:${TestUtil.port}"
@@ -42,11 +42,23 @@ open class BaseTest {
 
         private fun authenticate() {
             // Login
-            token = loginResponseLens(
+            userToken = loginResponseLens(
                     client(
                             loginRequestLens(
                                     Login(
                                             username = "test.user@testemail.com",
+                                            password = "P@ssw0rd1"
+                                    ),
+                                    Request(Method.POST, loginUrl)
+                            )
+                    )
+            ).token
+
+            adminToken = loginResponseLens(
+                    client(
+                            loginRequestLens(
+                                    Login(
+                                            username = "test.admin@testemail.com",
                                             password = "P@ssw0rd1"
                                     ),
                                     Request(Method.POST, loginUrl)
