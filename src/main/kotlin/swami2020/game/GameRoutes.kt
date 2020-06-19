@@ -1,12 +1,15 @@
 package swami2020.game
 
-import org.http4k.core.*
-import org.http4k.format.Jackson.auto
+import org.http4k.core.Method
+import org.http4k.core.Request
+import org.http4k.core.Response
+import org.http4k.core.Status
 import org.http4k.routing.bind
 import org.http4k.routing.path
-import swami2020.api.Game
-import swami2020.api.request.CompleteGame
-import swami2020.api.request.CreateGame
+import swami2020.api.completeGameLens
+import swami2020.api.createGameLens
+import swami2020.api.gameLens
+import swami2020.api.gameListLens
 import swami2020.api.request.RequestHandler
 import swami2020.api.response.ID
 import swami2020.app.AppFactory
@@ -15,11 +18,6 @@ import java.util.*
 class GameRoutes : RequestHandler() {
 
     private lateinit var gameService: GameService
-
-    private val gameListLens = Body.auto<Collection<Game>>().toLens()
-    private val gameLens = Body.auto<Game>().toLens()
-    private val createGameLens = Body.auto<CreateGame>().toLens()
-    private val completeGameLens = Body.auto<CompleteGame>().toLens()
 
     override fun setUp(factory: AppFactory) {
         super.setUp(factory)

@@ -1,11 +1,14 @@
 package swami2020.game
 
+import org.junit.AfterClass
 import org.junit.BeforeClass
 import swami2020.BaseTest
 import swami2020.TestUtil
 import swami2020.api.request.CreateGame
 import swami2020.api.request.CreateSelection
 import swami2020.exception.ItemNotFoundException
+import swami2020.selection.NewUserSelection
+import swami2020.selection.SelectionService
 import java.util.*
 import kotlin.test.*
 
@@ -17,18 +20,25 @@ class GameServiceTest : BaseTest() {
     val iowa = UUID.fromString("9579145e-1946-4f42-9c47-42fefb4eb8e6")
     val minnesota = UUID.fromString("fc623823-a492-4264-a960-8d5053d16f08")
 
-    // TODO: Start here testing so we can use this for game endpoint testing
-
     companion object {
         // Class under test
         lateinit var gameService: GameService
+        lateinit var selectionService: SelectionService
 
         @JvmStatic
         @BeforeClass
         fun setUp() {
             gameService = TestUtil.appFactory.gameService
+            selectionService = TestUtil.appFactory.selectionService
         }
 
+        @JvmStatic
+        @AfterClass
+        fun clean() {
+            selectionService.list().map {
+                selectionService.delete(UUID.fromString(it.id))
+            }
+        }
     }
 
     @Test
@@ -109,7 +119,41 @@ class GameServiceTest : BaseTest() {
             }
         }
 
+        // Create user selections for this game and another
+
+        val validSelection = selectionService.createSelection(
+                NewUserSelection(
+                        user = userId,
+                        selection = actual.selections.first().id
+                )
+        )
+
+        val invalidSelection = selectionService.createSelection(
+                NewUserSelection(
+                        user = UUID.randomUUID(),
+                        selection = UUID.randomUUID()
+                )
+        )
+
         gameService.delete(testId)
+
+        var validUserSelectionFound = true
+        try {
+            selectionService.fetch(validSelection)
+        }catch(e: ItemNotFoundException) {
+            validUserSelectionFound = false
+        }
+
+        assertFalse(validUserSelectionFound)
+
+        var invalidUserSelectionFound = true
+        try {
+            selectionService.fetch(invalidSelection)
+        }catch(e: ItemNotFoundException) {
+            invalidUserSelectionFound = false
+        }
+
+        assertTrue(invalidUserSelectionFound)
 
         var found = true
 
@@ -122,17 +166,5 @@ class GameServiceTest : BaseTest() {
         assertFalse(found)
 
     }
-
-    //TODO: Implement these when the features are developed
-
-//    @Test
-//    fun updateGameScore() {
-//        gameService.updateGameScore()
-//    }
-//
-//    @Test
-//    fun cancelGame() {
-//        gameService.cancelGame()
-//    }
 
 }

@@ -3,23 +3,19 @@
  */
 package swami2020.team
 
-import org.http4k.core.Body
 import org.http4k.core.Method
 import org.http4k.core.Request
 import org.http4k.core.Status
-import org.http4k.format.Jackson.auto
 import swami2020.BaseTest
 import swami2020.api.response.Team
+import swami2020.api.teamLens
+import swami2020.api.teamListLens
 import java.util.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
 class TeamTest : BaseTest() {
-
-    private val teamLens = Body.auto<Team>().toLens()
-    private val teamListLens = Body.auto<Collection<Team>>().toLens()
-    private val teamsUrl = "$urlBase/$teamsPath"
 
     private val expectedTeam = Team(
             UUID.fromString("9579145e-1946-4f42-9c47-42fefb4eb8e6"),

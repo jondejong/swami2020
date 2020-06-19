@@ -1,16 +1,14 @@
 package swami2020.game
 
-import org.http4k.core.Body
 import org.http4k.core.Method
 import org.http4k.core.Request
 import org.http4k.core.Status
-import org.http4k.format.Jackson.auto
 import org.junit.AfterClass
 import org.junit.BeforeClass
 import swami2020.BaseTest
 import swami2020.SecureRequest
 import swami2020.TestUtil
-import swami2020.api.Game
+import swami2020.api.*
 import swami2020.api.request.CompleteGame
 import swami2020.api.request.CreateGame
 import swami2020.api.request.CreateSelection
@@ -28,21 +26,13 @@ class GameTest : BaseTest() {
         val nebraska = UUID.fromString("c7f2fdf8-b71e-48fe-b5fa-ac4c8c2cf993")
         val usc = UUID.fromString("2f400522-9e71-4cbf-964b-85d0b2899bc1")
 
-        private val gameListLens = Body.auto<Collection<Game>>().toLens()
-        private val gameLens = Body.auto<Game>().toLens()
-        private val createGameLens = Body.auto<CreateGame>().toLens()
-        private val completeGameLens = Body.auto<CompleteGame>().toLens()
-
         private val gamesUrl = "$urlBase/games"
 
         lateinit var expectedGame: Game
 
-        // TODO: Create games for a week
         @BeforeClass
         @JvmStatic
         fun createGames() {
-            println("starting concrete test setup")
-
             val gameService = TestUtil.appFactory.gameService
             val testGames = setOf(
                     CreateGame(
@@ -122,7 +112,7 @@ class GameTest : BaseTest() {
 
             testGames.map { gameService.create(it) }
             expectedGame = TestUtil.appFactory.gameService.listByWeek(weekIds[1]!!).first()
-            println("completed concrete test setup")
+
         }
 
         @AfterClass

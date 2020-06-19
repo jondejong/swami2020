@@ -4,9 +4,13 @@ import org.http4k.core.Method
 import org.http4k.core.Request
 import org.http4k.core.Status
 import swami2020.SecureRequest
+import swami2020.api.createWeekLens
 import swami2020.api.request.CreateWeek
 import swami2020.api.request.UpdateWeekComplete
 import swami2020.api.request.UpdateWeekReady
+import swami2020.api.updateWeekCompleteLens
+import swami2020.api.updateWeekReadyLens
+import swami2020.api.weekListLens
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -59,6 +63,11 @@ class WeekTest : BaseWeekTest() {
             }
         }
         assertTrue(found)
+    }
+
+    @Test
+    fun markWeekLocked() {
+
     }
 
     @Test

@@ -21,6 +21,10 @@ open class BaseTest {
         val usersPath = "users"
         val teamsPath = "teams"
         val loginPath = "login"
+        val weeksPath = "weeks"
+        val selectionsPath = "selections"
+
+        val userId = UUID.fromString("49c4db64-acd1-431f-b013-7f35895ec85b")
 
         val loginRequestLens = Body.auto<swami2020.api.request.Login>().toLens()
         val loginResponseLens = Body.auto<swami2020.api.response.Login>().toLens()
@@ -31,6 +35,9 @@ open class BaseTest {
 
         val loginUrl = "$urlBase/$loginPath"
         val usersUrl = "$urlBase/$usersPath"
+        val teamsUrl = "$urlBase/$teamsPath"
+        val weeksUrl = "$urlBase/$weeksPath"
+        val selectionsUrl = "$urlBase/$selectionsPath"
 
         val idLens = Body.auto<ID>().toLens()
 
@@ -71,10 +78,8 @@ open class BaseTest {
         @BeforeClass
         @JvmStatic
         fun setup() {
-            println("starting base test setup")
             TestUtil.start()
             authenticate()
-            println("completed base test setup")
         }
 
         @AfterClass
@@ -82,7 +87,6 @@ open class BaseTest {
         fun teardown() {
             TestUtil.stop()
         }
-
 
     }
 

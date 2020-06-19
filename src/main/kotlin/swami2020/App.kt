@@ -32,7 +32,8 @@ class App(appFactory: AppFactory) {
             "teams" bind appFactory.teamRoutes.routes,
             "users" bind appFactory.userRoutes.routes.withFilter(appFactory.authenticationFilter.authenticationFilter),
             "games" bind appFactory.gameRoutes.routes.withFilter(appFactory.authenticationFilter.authenticationFilter),
-            "weeks" bind appFactory.weekRoutes.routes.withFilter(appFactory.authenticationFilter.authenticationFilter)
+            "weeks" bind appFactory.weekRoutes.routes.withFilter(appFactory.authenticationFilter.authenticationFilter),
+            "selections" bind appFactory.selectionRoutes.routes.withFilter(appFactory.authenticationFilter.authenticationFilter)
     )
 
     // Compose all handlers
