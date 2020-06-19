@@ -1,15 +1,11 @@
 package swami2020.week
 
 import org.http4k.core.Body
-import org.http4k.core.Method
-import org.http4k.core.Request
 import org.http4k.format.Jackson.auto
 import org.junit.AfterClass
-import org.junit.BeforeClass
 import swami2020.BaseTest
 import swami2020.TestUtil
 import swami2020.api.request.CreateWeek
-import swami2020.api.request.Login
 import swami2020.api.request.UpdateWeekComplete
 import swami2020.api.request.UpdateWeekReady
 import swami2020.api.response.Week
@@ -26,25 +22,6 @@ open class BaseWeekTest : BaseTest() {
         val weekLens = Body.auto<Week>().toLens()
 
         val weeksUrl = "${BaseTest.urlBase}/weeks"
-
-        lateinit var token: String
-
-        @BeforeClass
-        @JvmStatic
-        fun authenticate() {
-            // Login
-            token = BaseTest.loginResponseLens(
-                    BaseTest.client(
-                            BaseTest.loginRequestLens(
-                                    Login(
-                                            username = "test.user@testemail.com",
-                                            password = "P@ssw0rd1"
-                                    ),
-                                    Request(Method.POST, BaseTest.loginUrl)
-                            )
-                    )
-            ).token
-        }
 
         @AfterClass
         @JvmStatic
