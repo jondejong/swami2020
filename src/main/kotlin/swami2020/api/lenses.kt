@@ -3,10 +3,7 @@ package swami2020.api
 import org.http4k.core.Body
 import org.http4k.format.Jackson.auto
 import swami2020.api.request.*
-import swami2020.api.response.Team
-import swami2020.api.response.User
-import swami2020.api.response.UserWeekSelections
-import swami2020.api.response.Week
+import swami2020.api.response.*
 
 // Week
 val updateWeekCompleteLens = Body.auto<UpdateWeekComplete>().toLens()
@@ -37,3 +34,6 @@ val createUserLens = Body.auto<CreateUser>().toLens()
 // Selections
 val userWeekSelectionsLens = Body.auto<UserWeekSelections>().toLens()
 val makeSelectionLens = Body.auto<MakeSelection>().toLens()
+
+// ID
+val idLens = Body.auto<ID>().toLens()

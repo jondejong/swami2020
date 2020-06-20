@@ -6,12 +6,18 @@ import org.http4k.core.Response
 import org.http4k.core.Status
 import org.http4k.routing.bind
 import org.http4k.routing.path
+import swami2020.api.idLens
+import swami2020.api.makeSelectionLens
 import swami2020.api.request.RequestHandler
+import swami2020.api.response.ID
 import swami2020.api.userWeekSelectionsLens
 import swami2020.app.AppFactory
 import swami2020.user.AuthenticatedUser
+import java.util.*
 
 class SelectionRoutes : RequestHandler() {
+
+    private data class UserWeekRequest(val user: UUID, val week: Int)
 
     private lateinit var selectionService: SelectionService
 
@@ -20,18 +26,40 @@ class SelectionRoutes : RequestHandler() {
         this.selectionService = factory.selectionService
     }
 
-    private val selectionListHandler = { request: Request ->
+    private val userWeekRequest = { request: Request ->
         val user: AuthenticatedUser? = contexts[request][AppFactory.AUTHENTICATED_USER]
+        UserWeekRequest(
+                user = user!!.id,
+                week = request.path("week")!!.toInt()
+        )
+    }
+
+    private val selectionListHandler = { request: Request ->
+        val userWeek = userWeekRequest(request)
         userWeekSelectionsLens(
                 selectionService.listUserWeek(
-                        week = request.path("week")!!.toInt(),
-                        user = user!!.id
+                        week = userWeek.week,
+                        user = userWeek.user
                 ),
                 Response(Status.OK)
         )
     }
 
+    private val makeSelectionHandler = { request: Request ->
+        val userWeek = userWeekRequest(request)
+
+        val id = selectionService.createSelection(
+                NewUserSelection(
+                        user = userWeek.user,
+                        selection = makeSelectionLens(request).selection
+                )
+        )
+
+        idLens(ID(id), Response(Status.OK))
+    }
+
     val routes = org.http4k.routing.routes(
-            "/{week:.*}" bind Method.GET to selectionListHandler
+            "/{week:.*}" bind Method.GET to selectionListHandler,
+            "/{week:.*}" bind Method.POST to makeSelectionHandler
     )
 }

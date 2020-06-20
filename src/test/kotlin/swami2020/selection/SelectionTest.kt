@@ -7,12 +7,15 @@ import org.junit.BeforeClass
 import swami2020.BaseTest
 import swami2020.SecureRequest
 import swami2020.TestUtil
+import swami2020.api.makeSelectionLens
 import swami2020.api.request.CreateGame
 import swami2020.api.request.CreateSelection
+import swami2020.api.request.MakeSelection
 import swami2020.api.userWeekSelectionsLens
 import java.util.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class SelectionTest : BaseTest() {
 
@@ -32,6 +35,8 @@ class SelectionTest : BaseTest() {
 
         val gameService = TestUtil.appFactory.gameService
         val selectionService = TestUtil.appFactory.selectionService
+
+        lateinit var selectionIds: List<UUID>
 
 
         @JvmStatic
@@ -116,10 +121,10 @@ class SelectionTest : BaseTest() {
             testGames.map { gameService.create(it) }
 
             // Get List of selection ids, one per game
-            val selectionIds = gameService.list().map { it.selections.first().id }.toList()
+            selectionIds = gameService.list().map { it.selections.first().id }.toList()
 
             // Create 2 selections for our test user
-            for(i in 0..1) {
+            for (i in 0..1) {
                 selectionService.createSelection(
                         NewUserSelection(
                                 user = userId,
@@ -132,7 +137,7 @@ class SelectionTest : BaseTest() {
             selectionService.createSelection(
                     NewUserSelection(
                             user = adminId,
-                            selection = selectionIds[3]
+                            selection = selectionIds[2]
                     )
             )
         }
@@ -155,12 +160,53 @@ class SelectionTest : BaseTest() {
                 actual = response.status
         )
 
+        val userWeek = userWeekSelectionsLens(response)
+
         assertEquals(
                 expected = 2,
-                actual = userWeekSelectionsLens(response).userSelections.size
+                actual = userWeek.userSelections.size
+        )
+
+        assertEquals(
+                expected = 1,
+                actual = userWeek.week
         )
 
     }
+
+    @Test
+    fun userMakesSelection() {
+        val expectedSelection = selectionIds[3]
+        val response = client(
+                makeSelectionLens(
+                        MakeSelection(expectedSelection),
+                        SecureRequest(Method.POST, "$selectionsUrl/1", userToken)
+                )
+        )
+
+        assertEquals(
+                expected = Status.OK,
+                actual = response.status
+        )
+
+        val selectionId = idLens(response).id
+
+        val selections = userWeekSelectionsLens(client(SecureRequest(Method.GET, "$selectionsUrl/1", userToken))).userSelections
+
+        assertEquals(
+                expected = 3,
+                actual = selections.size
+        )
+
+        var found = false
+        selections.map {
+            if (it.id == selectionId && it.selection.id == expectedSelection) {
+                found = true
+            }
+        }
+        assertTrue(found)
+    }
+
 
 //    @Test
 //    fun userCannotSeeOtherUsersForReadyWeek() {
@@ -172,12 +218,7 @@ class SelectionTest : BaseTest() {
 //
 //    }
 //
-//    @Test
-//    fun userMakesSelection() {
-//        val response = client(SecureRequest(Method.POST, "$selectionsUrl/1", userToken))
-//
-//        makeSelectionLens()
-//    }
+
 
     @Test
     fun doNotAllowDuplicatePosts() {
