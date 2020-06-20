@@ -6,10 +6,7 @@ import org.http4k.core.Response
 import org.http4k.core.Status
 import org.http4k.routing.bind
 import org.http4k.routing.path
-import swami2020.api.completeGameLens
-import swami2020.api.createGameLens
-import swami2020.api.gameLens
-import swami2020.api.gameListLens
+import swami2020.api.*
 import swami2020.api.request.RequestHandler
 import swami2020.api.response.ID
 import swami2020.app.AppFactory

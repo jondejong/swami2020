@@ -140,7 +140,7 @@ class GameServiceTest : BaseTest() {
         var validUserSelectionFound = true
         try {
             selectionService.fetch(validSelection)
-        }catch(e: ItemNotFoundException) {
+        } catch (e: ItemNotFoundException) {
             validUserSelectionFound = false
         }
 
@@ -149,7 +149,7 @@ class GameServiceTest : BaseTest() {
         var invalidUserSelectionFound = true
         try {
             selectionService.fetch(invalidSelection)
-        }catch(e: ItemNotFoundException) {
+        } catch (e: ItemNotFoundException) {
             invalidUserSelectionFound = false
         }
 

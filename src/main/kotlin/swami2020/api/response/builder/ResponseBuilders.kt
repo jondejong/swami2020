@@ -44,7 +44,7 @@ val selectionFromGameRecord = { gameRecord: GameRecord ->
 
 val selectionFrom = { record: UserSelectionRecord ->
     Selection(
-            id = record.id,
+            id = record.selectionId,
             favorite = record.favorite,
             home = record.home,
             score = record.score,
