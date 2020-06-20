@@ -118,6 +118,7 @@ class SelectionTest : BaseTest() {
             // Get List of selection ids, one per game
             val selectionIds = gameService.list().map { it.selections.first().id }.toList()
 
+            // Create 2 selections for our test user
             for(i in 0..1) {
                 selectionService.createSelection(
                         NewUserSelection(
@@ -127,6 +128,13 @@ class SelectionTest : BaseTest() {
                 )
             }
 
+            // Create 1 other
+            selectionService.createSelection(
+                    NewUserSelection(
+                            user = adminId,
+                            selection = selectionIds[3]
+                    )
+            )
         }
 
         @JvmStatic

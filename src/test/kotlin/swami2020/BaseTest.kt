@@ -25,6 +25,7 @@ open class BaseTest {
         val selectionsPath = "selections"
 
         val userId = UUID.fromString("49c4db64-acd1-431f-b013-7f35895ec85b")
+        val adminId = UUID.fromString("f438f2ee-28ae-482f-b6a6-8c7474510092")
 
         val loginRequestLens = Body.auto<swami2020.api.request.Login>().toLens()
         val loginResponseLens = Body.auto<swami2020.api.response.Login>().toLens()
