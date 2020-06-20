@@ -9,16 +9,19 @@ import swami2020.api.response.builder.gameFrom
 import swami2020.app.AppFactory
 import swami2020.app.SwamiConfigurable
 import swami2020.exception.ItemNotFoundException
+import swami2020.selection.UserSelectionRepository
 import java.util.*
 import kotlin.collections.HashMap
 
 class GameService : SwamiConfigurable {
     private lateinit var gameRepository: GameRepository
     private lateinit var selectionRepository: SelectionRepository
+    private lateinit var userSelectionRepository: UserSelectionRepository
 
     override fun setUp(factory: AppFactory) {
         this.gameRepository = factory.gameRepository
         this.selectionRepository = factory.selectionRepository
+        this.userSelectionRepository = factory.userSelectionRepository
     }
 
     fun listByWeek(weekId: UUID): Collection<Game> {
@@ -39,8 +42,10 @@ class GameService : SwamiConfigurable {
     }
 
     fun delete(id: UUID) {
-
         //TODO: Wrap this in a transaction
+        selectionRepository.listIdsByGame(id.toString()).map {
+            userSelectionRepository.deleteBySelection(it.id.toString())
+        }
         gameRepository.delete(id.toString())
         selectionRepository.deleteByGame(id.toString())
     }

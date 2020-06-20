@@ -1,21 +1,21 @@
 package swami2020.user
 
-import org.http4k.core.*
-import org.http4k.format.Jackson.auto
+import org.http4k.core.Method
+import org.http4k.core.Request
+import org.http4k.core.Response
+import org.http4k.core.Status
 import org.http4k.routing.bind
 import org.http4k.routing.path
-import swami2020.api.request.CreateUser
+import swami2020.api.createUserLens
 import swami2020.api.request.RequestHandler
-import swami2020.api.response.User
+import swami2020.api.userLens
+import swami2020.api.userListLens
 import swami2020.app.AppFactory
 import java.util.*
 
 class UserRoutes : RequestHandler() {
 
     private lateinit var userService: UserService
-    private val userLens = Body.auto<User>().toLens()
-    private val userListLens = Body.auto<Collection<User>>().toLens()
-    private val createUserLens = Body.auto<CreateUser>().toLens()
 
     override fun setUp(factory: AppFactory) {
         super.setUp(factory)

@@ -2,6 +2,7 @@ package swami2020.game
 
 import com.jondejong.swami.model.tables.Selection.SELECTION
 import swami2020.app.SwamiRepository
+import swami2020.database.RepositoryId
 
 class SelectionRepository : SwamiRepository() {
 
@@ -21,6 +22,15 @@ class SelectionRepository : SwamiRepository() {
                     selection.favorite,
                     selection.team.toString()
             ).execute()
+        }
+    }
+
+    fun listIdsByGame(game: String): Collection<RepositoryId> {
+        context.use { context ->
+            return context.select(SELECTION.ID)
+                    .from(SELECTION)
+                    .where(SELECTION.GAME.eq(game))
+                    .fetchInto(RepositoryId::class.java)
         }
     }
 

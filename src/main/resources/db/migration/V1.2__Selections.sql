@@ -33,11 +33,11 @@ create table selection
 
 create table game
 (
-    id   text primary key,
-    week text,
+    id        text primary key,
+    week      text,
     cancelled boolean,
-    complete boolean,
-    spread   numeric
+    complete  boolean,
+    spread    numeric
 );
 
 -- TODO: Temp testing data to go away

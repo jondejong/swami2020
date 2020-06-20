@@ -4,6 +4,7 @@ import org.http4k.core.Method
 import org.http4k.core.Status
 import swami2020.SecureRequest
 import swami2020.TestUtil
+import swami2020.api.weekLens
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

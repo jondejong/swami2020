@@ -2,10 +2,10 @@ package swami2020.api.response.builder
 
 import com.jondejong.swami.model.tables.pojos.SwamiUser
 import swami2020.api.Game
-import swami2020.api.response.Selection
-import swami2020.api.response.Team
-import swami2020.api.response.User
+import swami2020.api.response.*
 import swami2020.game.GameRecord
+import swami2020.selection.UserSelectionRecord
+import swami2020.selection.UserWeekRecordCollection
 import java.util.*
 
 val userFrom = { swamiUser: SwamiUser ->
@@ -26,23 +26,42 @@ val gameFrom = { recordGroup: RecordGroup ->
             complete = recordGroup.record1.complete,
             spread = recordGroup.record1.spread,
             selections = setOf(
-                    selectionFrom(recordGroup.record1),
-                    selectionFrom(recordGroup.record2!!)
+                    selectionFromGameRecord(recordGroup.record1),
+                    selectionFromGameRecord(recordGroup.record2!!)
             )
     )
 }
 
-val selectionFrom = { gameRecord: GameRecord ->
+val selectionFromGameRecord = { gameRecord: GameRecord ->
     Selection(
             id = gameRecord.selectionId,
             favorite = gameRecord.selectionFavorite,
             home = gameRecord.selectionHome,
-            team = teamFrom(gameRecord),
+            team = teamFromGameRecord(gameRecord),
             score = gameRecord.selectionScore
     )
 }
 
-val teamFrom = { gameRecord: GameRecord ->
+val selectionFrom = { record: UserSelectionRecord ->
+    Selection(
+            id = record.id,
+            favorite = record.favorite,
+            home = record.home,
+            score = record.score,
+            team = teamFromSelectionRecord(record)
+    )
+}
+
+val teamFromSelectionRecord = { record: UserSelectionRecord ->
+    Team(
+            id = record.teamId,
+            name = record.teamName,
+            nickName = record.teamNickName,
+            conference = record.conference
+    )
+}
+
+val teamFromGameRecord = { gameRecord: GameRecord ->
     Team(
             id = gameRecord.selectionTeamId,
             name = gameRecord.selectionTeamName,
@@ -50,3 +69,22 @@ val teamFrom = { gameRecord: GameRecord ->
             conference = gameRecord.selectionConference
     )
 }
+
+val userWeekSelectionsFrom = { record: UserWeekRecordCollection ->
+    UserWeekSelections(
+            userId = record.user.id,
+            firstName = record.user.firstName,
+            lastName = record.user.lastName,
+            week = record.week.number,
+            weekId = UUID.fromString(record.week.id),
+            userSelections = record.userSelectionRecords.map { userSelectionFrom(it) }
+    )
+}
+
+val userSelectionFrom = { record: UserSelectionRecord ->
+    UserSelection(
+            id = record.id,
+            selection = selectionFrom(record)
+    )
+}
+

@@ -1,20 +1,17 @@
 package swami2020.security
 
-import org.http4k.core.Body
 import org.http4k.core.Method
 import org.http4k.core.Request
 import org.http4k.core.Status
-import org.http4k.format.Jackson.auto
 import swami2020.BaseTest
 import swami2020.api.request.Login
 import swami2020.api.response.User
+import swami2020.api.userLens
 import java.util.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class LoginTest : BaseTest() {
-
-    private val userLens = Body.auto<User>().toLens()
 
     private val expectedUser = User(
             id = UUID.fromString("49c4db64-acd1-431f-b013-7f35895ec85b"),
@@ -61,7 +58,7 @@ class LoginTest : BaseTest() {
     @Test
     fun authentication() {
         // Hitting a secured endpoint should fail
-        val unauthenticatedActual = client(Request(Method.GET, "$usersUrl"))
+        val unauthenticatedActual = client(Request(Method.GET, usersUrl))
         assertEquals(Status.UNAUTHORIZED, unauthenticatedActual.status)
 
         // Login
