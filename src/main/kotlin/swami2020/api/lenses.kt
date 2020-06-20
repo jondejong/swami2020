@@ -7,6 +7,7 @@ import swami2020.api.response.*
 
 // Week
 val updateWeekCompleteLens = Body.auto<UpdateWeekComplete>().toLens()
+val updateWeekLockedLens = Body.auto<UpdateWeekLocked>().toLens()
 val updateWeekReadyLens = Body.auto<UpdateWeekReady>().toLens()
 val createWeekLens = Body.auto<CreateWeek>().toLens()
 val weekListLens = Body.auto<Collection<Week>>().toLens()

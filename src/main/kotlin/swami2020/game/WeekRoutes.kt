@@ -55,11 +55,20 @@ class WeekRoutes : RequestHandler() {
         Response(Status.OK)
     }
 
+    private val updateLockedHandler = { request: Request ->
+        weekService.updateLocked(
+                UUID.fromString(request.path("id")),
+                updateWeekLockedLens(request).locked
+        )
+        Response(Status.OK)
+    }
+
     val routes = org.http4k.routing.routes(
             "/" bind Method.GET to weekListHandler,
             "/" bind Method.POST to createWeekHandler,
             "/current" bind Method.GET to currentWeekHandler,
             "/{id:.*}/ready" bind Method.PUT to updateReadyHandler,
-            "/{id:.*}/complete" bind Method.PUT to updateCompleteHandler
+            "/{id:.*}/complete" bind Method.PUT to updateCompleteHandler,
+            "/{id:.*}/locked" bind Method.PUT to updateLockedHandler
     )
 }

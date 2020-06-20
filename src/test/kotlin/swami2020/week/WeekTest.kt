@@ -4,13 +4,11 @@ import org.http4k.core.Method
 import org.http4k.core.Request
 import org.http4k.core.Status
 import swami2020.SecureRequest
-import swami2020.api.createWeekLens
+import swami2020.api.*
 import swami2020.api.request.CreateWeek
 import swami2020.api.request.UpdateWeekComplete
+import swami2020.api.request.UpdateWeekLocked
 import swami2020.api.request.UpdateWeekReady
-import swami2020.api.updateWeekCompleteLens
-import swami2020.api.updateWeekReadyLens
-import swami2020.api.weekListLens
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -56,6 +54,7 @@ class WeekTest : BaseWeekTest() {
         )
 
         var found = false
+        val i = weekIds[1]
         weekListLens(client(SecureRequest(Method.GET, weeksUrl, userToken))).map {
             if (it.id == weekIds[1]) {
                 found = true
@@ -67,7 +66,24 @@ class WeekTest : BaseWeekTest() {
 
     @Test
     fun markWeekLocked() {
+        assertEquals(
+                expected = Status.OK,
+                actual = client(
+                        updateWeekLockedLens(
+                                UpdateWeekLocked(true),
+                                SecureRequest(Method.PUT, "$weeksUrl/${weekIds[1]}/locked", userToken)
+                        )
+                ).status
+        )
 
+        var found = false
+        weekListLens(client(SecureRequest(Method.GET, weeksUrl, userToken))).map {
+            if (it.id == weekIds[1]) {
+                found = true
+                assertTrue(it.locked)
+            }
+        }
+        assertTrue(found)
     }
 
     @Test
