@@ -24,7 +24,7 @@ class WeekService : SwamiConfigurable {
         val id = UUID.randomUUID()
 
         weekRepository.create(
-                Week(id.toString(), false, false, createWeek.number)
+                Week(id.toString(), false, false, false, createWeek.number)
         )
 
         return id
@@ -69,6 +69,13 @@ class WeekService : SwamiConfigurable {
 
     fun updateReady(id: UUID, status: Boolean) {
         weekRepository.updateReady(
+                id = id.toString(),
+                status = status
+        )
+    }
+
+    fun updateLocked(id: UUID, status: Boolean) {
+        weekRepository.updateLocked(
                 id = id.toString(),
                 status = status
         )

@@ -12,6 +12,7 @@ class WeekRepository : SwamiRepository() {
                 WEEK.ID,
                 WEEK.READY,
                 WEEK.COMPLETE,
+                WEEK.LOCKED,
                 WEEK.NUMBER
         ).from(WEEK)
     }
@@ -54,11 +55,13 @@ class WeekRepository : SwamiRepository() {
                     WEEK.ID,
                     WEEK.NUMBER,
                     WEEK.READY,
+                    WEEK.LOCKED,
                     WEEK.COMPLETE
             ).values(
                     week.id,
                     week.number,
                     week.ready,
+                    week.locked,
                     week.complete
             ).execute()
         }
@@ -84,6 +87,16 @@ class WeekRepository : SwamiRepository() {
         context.use { context ->
             context.update(WEEK)
                     .set(WEEK.READY, status)
+                    .where(WEEK.ID.eq(id))
+                    .execute()
+
+        }
+    }
+
+    fun updateLocked(id: String, status: Boolean) {
+        context.use { context ->
+            context.update(WEEK)
+                    .set(WEEK.LOCKED, status)
                     .where(WEEK.ID.eq(id))
                     .execute()
 

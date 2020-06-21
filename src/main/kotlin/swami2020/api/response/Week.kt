@@ -6,6 +6,7 @@ data class Week(
         val id: UUID,
         val number: Int,
         val ready: Boolean,
+        val locked: Boolean,
         val complete: Boolean
 ) {
     companion object {
@@ -14,6 +15,7 @@ data class Week(
                     id = UUID.fromString(week.id),
                     number = week.number,
                     ready = week.ready,
+                    locked = week.locked,
                     complete = week.complete
             )
         }
