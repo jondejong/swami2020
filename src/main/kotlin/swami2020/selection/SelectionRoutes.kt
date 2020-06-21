@@ -17,8 +17,6 @@ import java.util.*
 
 class SelectionRoutes : RequestHandler() {
 
-    private data class UserWeekRequest(val user: UUID, val week: Int)
-
     private lateinit var selectionService: SelectionService
 
     override fun setUp(factory: AppFactory) {
@@ -28,19 +26,17 @@ class SelectionRoutes : RequestHandler() {
 
     private val userWeekRequest = { request: Request ->
         val user: AuthenticatedUser? = contexts[request][AppFactory.AUTHENTICATED_USER]
+        val queryUser = request.query("user")
         UserWeekRequest(
-                user = user!!.id,
+                loggedInUser = user!!.id,
+                queryUser = if (queryUser != null) UUID.fromString(queryUser) else user.id,
                 week = request.path("week")!!.toInt()
         )
     }
 
     private val selectionListHandler = { request: Request ->
-        val userWeek = userWeekRequest(request)
         userWeekSelectionsLens(
-                selectionService.listUserWeek(
-                        week = userWeek.week,
-                        user = userWeek.user
-                ),
+                selectionService.listUserWeek(userWeekRequest(request)),
                 Response(Status.OK)
         )
     }
@@ -50,7 +46,7 @@ class SelectionRoutes : RequestHandler() {
 
         val id = selectionService.createSelection(
                 NewUserSelection(
-                        user = userWeek.user,
+                        user = userWeek.queryUser,
                         selection = makeSelectionLens(request).selection
                 )
         )

@@ -3,7 +3,6 @@ package swami2020.week
 import org.http4k.core.Method
 import org.http4k.core.Status
 import swami2020.SecureRequest
-import swami2020.TestUtil
 import swami2020.api.weekLens
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -12,43 +11,8 @@ class CurrentWeekTest : BaseWeekTest() {
 
     companion object {
 
-        private val service = TestUtil.appFactory.weekService
-
         val currentUrl = "$weeksUrl/current"
 
-        val setReadyCurrentWeek = { week: Int ->
-            // The "current" week is ready but not completed
-            cleanUp()
-            for (number in 1.until(week)) {
-                service.updateReady(
-                        id = weekIds[number]!!,
-                        status = true
-                )
-                service.updateComplete(
-                        id = weekIds[number]!!,
-                        status = true
-                )
-            }
-            service.updateReady(
-                    id = weekIds[week]!!,
-                    status = true
-            )
-        }
-
-        val setCompletedCurrentWeek = { week: Int ->
-            // The "current" week is ready but not completed
-            cleanUp()
-            for (number in 1.until(week + 1)) {
-                service.updateReady(
-                        id = weekIds[number]!!,
-                        status = true
-                )
-                service.updateComplete(
-                        id = weekIds[number]!!,
-                        status = true
-                )
-            }
-        }
     }
 
     @Test
@@ -87,7 +51,7 @@ class CurrentWeekTest : BaseWeekTest() {
     @Test
     fun noCurrentWeek() {
         //if no weeks match the criteria, we should get a 404
-        cleanUp()
+        resetWeeks()
         val response = client(SecureRequest(Method.GET, currentUrl, userToken))
         assertEquals(
                 expected = Status.NOT_FOUND,
