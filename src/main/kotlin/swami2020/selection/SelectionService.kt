@@ -7,6 +7,7 @@ import swami2020.app.AppFactory
 import swami2020.app.SwamiConfigurable
 import swami2020.exception.IllegalDataStateException
 import swami2020.exception.ItemNotFoundException
+import swami2020.exception.UnauthenticatedException
 import swami2020.game.WeekService
 import swami2020.user.UserService
 import java.util.*
@@ -27,14 +28,22 @@ class SelectionService : SwamiConfigurable {
         return userSelectionRepository.list()
     }
 
-    fun listUserWeek(user: UUID, week: Int): UserWeekSelections {
+    fun listUserWeek(request: UserWeekRequest): UserWeekSelections {
+
+        val week = weekService.fetchByNumber(request.week)
+
+        // You can only see other user's picks if the week is locked
+        if ((request.queryUser != request.loggedInUser) && !week.locked) {
+            throw UnauthenticatedException()
+        }
+
         return userWeekSelectionsFrom(
                 UserWeekRecordCollection(
-                        user = userService.fetch(user),
-                        week = weekService.fetchByNumber(week),
+                        user = userService.fetch(request.queryUser),
+                        week = week,
                         userSelectionRecords = userSelectionRepository.listByUserWeek(
-                                user = user.toString(),
-                                week = week
+                                user = request.queryUser.toString(),
+                                week = request.week
                         )
                 )
         )

@@ -54,7 +54,6 @@ class WeekTest : BaseWeekTest() {
         )
 
         var found = false
-        val i = weekIds[1]
         weekListLens(client(SecureRequest(Method.GET, weeksUrl, userToken))).map {
             if (it.id == weekIds[1]) {
                 found = true

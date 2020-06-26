@@ -4,7 +4,6 @@ import org.http4k.core.Method
 import org.http4k.core.Status
 import org.junit.AfterClass
 import org.junit.BeforeClass
-import swami2020.BaseTest
 import swami2020.SecureRequest
 import swami2020.TestUtil
 import swami2020.api.makeSelectionLens
@@ -12,12 +11,13 @@ import swami2020.api.request.CreateGame
 import swami2020.api.request.CreateSelection
 import swami2020.api.request.MakeSelection
 import swami2020.api.userWeekSelectionsLens
+import swami2020.week.BaseWeekTest
 import java.util.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-class SelectionTest : BaseTest() {
+class SelectionTest : BaseWeekTest() {
 
     companion object {
 
@@ -34,6 +34,7 @@ class SelectionTest : BaseTest() {
         val wisconsin = UUID.fromString("e4a93a91-a8ee-433d-a300-5180929d9387")
 
         val gameService = TestUtil.appFactory.gameService
+        val weekService = TestUtil.appFactory.weekService
         val selectionService = TestUtil.appFactory.selectionService
 
         lateinit var selectionIds: List<UUID>
@@ -144,8 +145,7 @@ class SelectionTest : BaseTest() {
 
         @JvmStatic
         @AfterClass
-        fun cleanup() {
-            //TODO: Delete all games
+        fun deleteGames() {
             TestUtil.appFactory.gameService.list().map {
                 TestUtil.appFactory.gameService.delete(it.id)
             }
@@ -207,21 +207,52 @@ class SelectionTest : BaseTest() {
         assertTrue(found)
     }
 
-
-//    @Test
-//    fun userCannotSeeOtherUsersForReadyWeek() {
-//
-//    }
-//
-//    @Test
-//    fun userCanSeeOtherUsersForLockedWeek() {
-//
-//    }
-//
-
+    @Test
+    fun userCannotSeeOtherUsersForReadyWeek() {
+        resetWeeks()
+        setReadyCurrentWeek(1)
+        assertEquals(
+                expected = Status.UNAUTHORIZED,
+                actual = client(
+                        SecureRequest(Method.GET, "$selectionsUrl/1?user=${adminId}", userToken)
+                ).status
+        )
+    }
 
     @Test
-    fun doNotAllowDuplicatePosts() {
+    fun userCanSeeOtherUsersForLockedWeek() {
+        resetWeeks()
+        setLockedCurrentWeek(1)
+        val response = client(
+                SecureRequest(Method.GET, "$selectionsUrl/1?user=${adminId}", userToken)
+        )
+        assertEquals(
+                expected = Status.OK,
+                actual = response.status
+        )
+
+        val selections = userWeekSelectionsLens(response)
+
+        assertEquals(
+                expected = adminId,
+                actual = selections.userId
+        )
+
+        assertEquals(
+                expected = 1,
+                actual = selections.week
+        )
+
+        assertEquals(
+                expected = 1,
+                actual = selections.userSelections.size
+        )
 
     }
+
+
+//    @Test
+//    fun doNotAllowDuplicatePosts() {
+//
+//    }
 }
