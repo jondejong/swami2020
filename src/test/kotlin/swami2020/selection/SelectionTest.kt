@@ -189,6 +189,7 @@ class SelectionTest : BaseWeekTest() {
 
     @Test
     fun userMakesSelection() {
+        deleteUserWeeks()
         val expectedSelection = selectionIds[3]
         val response = client(
                 makeSelectionLens(
@@ -271,6 +272,7 @@ class SelectionTest : BaseWeekTest() {
     @Test
     fun userCanSubmitPicksForReadyWeek() {
         resetWeeks()
+        deleteUserWeeks()
         setReadyCurrentWeek(1)
 
         assertEquals(
@@ -299,12 +301,35 @@ class SelectionTest : BaseWeekTest() {
 
     @Test
     fun userCannotSubmitPicksForNotReadyWeek() {
-
+        resetWeeks()
+        deleteUserWeeks()
+        setLockedCurrentWeek(1)
+        assertEquals(
+                expected = Status.BAD_REQUEST,
+                actual = client(
+                        updateUserWeekSubmittedLens(
+                                UpdateUserWeekSubmitted(true),
+                                SecureRequest(Method.PUT, "$selectionsUrl/2/submitted", userToken)
+                        )
+                ).status
+        )
     }
 
     @Test
     fun userCannotSubmitPicksForLockedWeek() {
+        resetWeeks()
+        deleteUserWeeks()
+        setLockedCurrentWeek(1)
 
+        assertEquals(
+                expected = Status.BAD_REQUEST,
+                actual = client(
+                        updateUserWeekSubmittedLens(
+                                UpdateUserWeekSubmitted(true),
+                                SecureRequest(Method.PUT, "$selectionsUrl/1/submitted", userToken)
+                        )
+                ).status
+        )
     }
 
 

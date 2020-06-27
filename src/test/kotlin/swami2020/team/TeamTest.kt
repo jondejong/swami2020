@@ -43,7 +43,7 @@ class TeamTest : BaseTest() {
 
     @Test
     fun teamFetch() {
-        val resp = client(Request(Method.GET, "$teamsUrl/${expectedTeam.id.toString()}"))
+        val resp = client(Request(Method.GET, "$teamsUrl/${expectedTeam.id}"))
         assertEquals(Status.OK, resp.status)
 
         val actualTeam = teamLens(resp)
