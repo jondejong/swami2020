@@ -10,18 +10,24 @@ import swami2020.api.idLens
 import swami2020.api.makeSelectionLens
 import swami2020.api.request.RequestHandler
 import swami2020.api.response.ID
+import swami2020.api.updateUserWeekSubmittedLens
 import swami2020.api.userWeekSelectionsLens
 import swami2020.app.AppFactory
+import swami2020.game.WeekService
 import swami2020.user.AuthenticatedUser
 import java.util.*
 
 class SelectionRoutes : RequestHandler() {
 
     private lateinit var selectionService: SelectionService
+    private lateinit var userWeekService: UserWeekService
+    private lateinit var weekService: WeekService
 
     override fun setUp(factory: AppFactory) {
         super.setUp(factory)
         this.selectionService = factory.selectionService
+        this.userWeekService = factory.userWeekService
+        this.weekService = factory.weekService
     }
 
     private val userWeekRequest = { request: Request ->
@@ -54,8 +60,19 @@ class SelectionRoutes : RequestHandler() {
         idLens(ID(id), Response(Status.OK))
     }
 
+    private val submitWeekHandler = { request: Request ->
+        val userWeek = userWeekRequest(request)
+        userWeekService.updateSubmitted(
+                user = userWeek.loggedInUser,
+                week = UUID.fromString(weekService.fetchByNumber(userWeek.week).id),
+                submitted = updateUserWeekSubmittedLens(request).submitted
+        )
+        Response(Status.OK)
+    }
+
     val routes = org.http4k.routing.routes(
             "/{week:.*}" bind Method.GET to selectionListHandler,
-            "/{week:.*}" bind Method.POST to makeSelectionHandler
+            "/{week:.*}" bind Method.POST to makeSelectionHandler,
+            "/{week:.*}/submitted" bind Method.PUT to submitWeekHandler
     )
 }

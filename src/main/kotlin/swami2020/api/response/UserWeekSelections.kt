@@ -8,6 +8,7 @@ data class UserWeekSelections(
         val lastName: String,
         val week: Int,
         val weekId: UUID,
+        val submitted: Boolean,
         val userSelections: Collection<UserSelection>
 )
 

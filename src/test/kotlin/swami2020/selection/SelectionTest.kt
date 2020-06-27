@@ -10,6 +10,8 @@ import swami2020.api.makeSelectionLens
 import swami2020.api.request.CreateGame
 import swami2020.api.request.CreateSelection
 import swami2020.api.request.MakeSelection
+import swami2020.api.request.UpdateUserWeekSubmitted
+import swami2020.api.updateUserWeekSubmittedLens
 import swami2020.api.userWeekSelectionsLens
 import swami2020.week.BaseWeekTest
 import java.util.*
@@ -143,12 +145,23 @@ class SelectionTest : BaseWeekTest() {
             )
         }
 
-        @JvmStatic
-        @AfterClass
         fun deleteGames() {
             TestUtil.appFactory.gameService.list().map {
                 TestUtil.appFactory.gameService.delete(it.id)
             }
+        }
+
+        fun deleteUserWeeks() {
+            TestUtil.appFactory.userWeekService.list().map {
+                TestUtil.appFactory.userWeekService.delete(UUID.fromString(it.id))
+            }
+        }
+
+        @JvmStatic
+        @AfterClass
+        fun cleanUp() {
+            deleteGames()
+            deleteUserWeeks()
         }
     }
 
@@ -191,15 +204,20 @@ class SelectionTest : BaseWeekTest() {
 
         val selectionId = idLens(response).id
 
-        val selections = userWeekSelectionsLens(client(SecureRequest(Method.GET, "$selectionsUrl/1", userToken))).userSelections
+        val userWeek = userWeekSelectionsLens(client(SecureRequest(Method.GET, "$selectionsUrl/1", userToken)))
 
         assertEquals(
                 expected = 3,
-                actual = selections.size
+                actual = userWeek.userSelections.size
+        )
+
+        assertEquals(
+                expected = false,
+                actual = userWeek.submitted
         )
 
         var found = false
-        selections.map {
+        userWeek.userSelections.map {
             if (it.id == selectionId && it.selection.id == expectedSelection) {
                 found = true
             }
@@ -247,6 +265,45 @@ class SelectionTest : BaseWeekTest() {
                 expected = 1,
                 actual = selections.userSelections.size
         )
+
+    }
+
+    @Test
+    fun userCanSubmitPicksForReadyWeek() {
+        resetWeeks()
+        setReadyCurrentWeek(1)
+
+        assertEquals(
+                expected = false,
+                actual = userWeekSelectionsLens(client(SecureRequest(Method.GET, "$selectionsUrl/1", userToken))).submitted
+        )
+
+        val response = client(
+                updateUserWeekSubmittedLens(
+                        UpdateUserWeekSubmitted(true),
+                        SecureRequest(Method.PUT, "$selectionsUrl/1/submitted", userToken)
+                )
+        )
+
+        assertEquals(
+                expected = Status.OK,
+                actual = response.status
+        )
+
+        assertEquals(
+                expected = true,
+                actual = userWeekSelectionsLens(client(SecureRequest(Method.GET, "$selectionsUrl/1", userToken))).submitted
+        )
+
+    }
+
+    @Test
+    fun userCannotSubmitPicksForNotReadyWeek() {
+
+    }
+
+    @Test
+    fun userCannotSubmitPicksForLockedWeek() {
 
     }
 

@@ -6,9 +6,7 @@ import swami2020.database.DatabaseConfig
 import swami2020.filters.AuthenticationFilter
 import swami2020.game.*
 import swami2020.properties.SwamiProperties
-import swami2020.selection.SelectionRoutes
-import swami2020.selection.SelectionService
-import swami2020.selection.UserSelectionRepository
+import swami2020.selection.*
 import swami2020.team.TeamRepository
 import swami2020.team.TeamRoutes
 import swami2020.team.TeamService
@@ -59,6 +57,8 @@ class AppFactory(properties: SwamiProperties) {
     val userSelectionRepository = UserSelectionRepository()
     val selectionService = SelectionService()
     val selectionRoutes = SelectionRoutes()
+    val userWeekRepository = UserWeekRepository()
+    val userWeekService = UserWeekService()
 
     val dataSource = HikariDataSource(databaseConfig)
 
@@ -95,5 +95,7 @@ class AppFactory(properties: SwamiProperties) {
         userSelectionRepository.setUp(this)
         selectionService.setUp(this)
         selectionRoutes.setUp(this)
+        userWeekRepository.setUp(this)
+        userWeekService.setUp(this)
     }
 }
