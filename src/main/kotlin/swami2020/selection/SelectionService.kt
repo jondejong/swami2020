@@ -17,11 +17,13 @@ class SelectionService : SwamiConfigurable {
     lateinit var userSelectionRepository: UserSelectionRepository
     lateinit var userService: UserService
     lateinit var weekService: WeekService
+    lateinit var userWeekService: UserWeekService
 
     override fun setUp(factory: AppFactory) {
         this.userSelectionRepository = factory.userSelectionRepository
         this.userService = factory.userService
         this.weekService = factory.weekService
+        this.userWeekService = factory.userWeekService
     }
 
     fun list(): Collection<UserSelection> {
@@ -29,7 +31,6 @@ class SelectionService : SwamiConfigurable {
     }
 
     fun listUserWeek(request: UserWeekRequest): UserWeekSelections {
-
         val week = weekService.fetchByNumber(request.week)
 
         // You can only see other user's picks if the week is locked
@@ -41,6 +42,7 @@ class SelectionService : SwamiConfigurable {
                 UserWeekRecordCollection(
                         user = userService.fetch(request.queryUser),
                         week = week,
+                        submitted = userWeekService.isSubmitted(UUID.fromString(week.id), request.queryUser),
                         userSelectionRecords = userSelectionRepository.listByUserWeek(
                                 user = request.queryUser.toString(),
                                 week = request.week

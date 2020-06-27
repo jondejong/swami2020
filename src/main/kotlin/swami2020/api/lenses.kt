@@ -35,6 +35,7 @@ val createUserLens = Body.auto<CreateUser>().toLens()
 // Selections
 val userWeekSelectionsLens = Body.auto<UserWeekSelections>().toLens()
 val makeSelectionLens = Body.auto<MakeSelection>().toLens()
+val updateUserWeekSubmittedLens = Body.auto<UpdateUserWeekSubmitted>().toLens()
 
 // ID
 val idLens = Body.auto<ID>().toLens()

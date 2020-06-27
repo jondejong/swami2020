@@ -77,6 +77,7 @@ val userWeekSelectionsFrom = { record: UserWeekRecordCollection ->
             lastName = record.user.lastName,
             week = record.week.number,
             weekId = UUID.fromString(record.week.id),
+            submitted = record.submitted,
             userSelections = record.userSelectionRecords.map { userSelectionFrom(it) }
     )
 }
