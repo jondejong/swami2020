@@ -8,6 +8,7 @@ import org.http4k.core.Request
 import org.http4k.core.Response
 import org.http4k.core.Status.Companion.OK
 import org.http4k.core.then
+import org.http4k.filter.CorsPolicy
 import org.http4k.filter.ServerFilters
 import org.http4k.routing.bind
 import org.http4k.routing.path
@@ -39,6 +40,7 @@ class App(appFactory: AppFactory) {
     // Compose all handlers
     private val app =
             ServerFilters.InitialiseRequestContext(appFactory.contexts)
+                    .then(ServerFilters.Cors(CorsPolicy.UnsafeGlobalPermissive))
                     .then(ErrorHandlerFilter.errorFilter)
                     .then(handlers)
 
