@@ -37,10 +37,14 @@ class App(appFactory: AppFactory) {
             "selections" bind appFactory.selectionRoutes.routes.withFilter(appFactory.authenticationFilter.authenticationFilter)
     )
 
-    // Compose all handlers
     private val app =
             ServerFilters.InitialiseRequestContext(appFactory.contexts)
-                    .then(ServerFilters.Cors(CorsPolicy.UnsafeGlobalPermissive))
+                    .then(ServerFilters.Cors(CorsPolicy(
+                            origins = listOf("*"),
+                            headers = listOf("content-type", AppFactory.AUTHENTICATION_HEADER),
+                            methods = Method.values().toList(),
+                            credentials = true
+                    )))
                     .then(ErrorHandlerFilter.errorFilter)
                     .then(handlers)
 
