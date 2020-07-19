@@ -82,7 +82,7 @@ class SelectionRoutes : RequestHandler() {
         }
         val selection = UUID.fromString(request.path("selection"))
         selectionService.delete(selection)
-        Response(Status.OK)
+        idLens(ID(selection), Response(Status.OK))
     }
 
     val routes = org.http4k.routing.routes(
