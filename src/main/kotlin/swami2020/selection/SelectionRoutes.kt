@@ -13,6 +13,7 @@ import swami2020.api.response.ID
 import swami2020.api.updateUserWeekSubmittedLens
 import swami2020.api.userWeekSelectionsLens
 import swami2020.app.AppFactory
+import swami2020.exception.IllegalDataStateException
 import swami2020.game.WeekService
 import swami2020.user.AuthenticatedUser
 import java.util.*
@@ -70,9 +71,24 @@ class SelectionRoutes : RequestHandler() {
         Response(Status.OK)
     }
 
+    private val deleteSelectionHandler = { request: Request ->
+        val userWeek = userWeekRequest(request)
+        val weekId = UUID.fromString(weekService.fetchByNumber(userWeek.week).id)
+        if (userWeekService.isSubmitted(
+                        week = weekId,
+                        user = userWeek.loggedInUser
+                )) {
+            throw IllegalDataStateException()
+        }
+        val selection = UUID.fromString(request.path("selection"))
+        selectionService.delete(selection)
+        Response(Status.OK)
+    }
+
     val routes = org.http4k.routing.routes(
             "/{week:.*}" bind Method.GET to selectionListHandler,
             "/{week:.*}" bind Method.POST to makeSelectionHandler,
-            "/{week:.*}/submitted" bind Method.PUT to submitWeekHandler
+            "/{week:.*}/submitted" bind Method.PUT to submitWeekHandler,
+            "/{week:.*}/{selection:.*}" bind Method.DELETE to deleteSelectionHandler
     )
 }
