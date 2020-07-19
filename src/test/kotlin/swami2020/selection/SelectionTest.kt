@@ -359,6 +359,11 @@ class SelectionTest : BaseWeekTest() {
         )
 
         assertEquals(
+                expected = selectionId,
+                actual = idLens(response).id
+        )
+
+        assertEquals(
                 expected = expectedSelectionCount,
                 actual = userWeekSelectionsLens(
                         client(SecureRequest(Method.GET, "$selectionsUrl/1", userToken))
