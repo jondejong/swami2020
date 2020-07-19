@@ -145,6 +145,10 @@ class SelectionTest : BaseWeekTest() {
             )
         }
 
+        fun toggleWeekSubmit(number: Int, submitted: Boolean) {
+            TestUtil.appFactory.userWeekService.updateSubmitted(weekIds[number]!!, userId, submitted)
+        }
+
         fun deleteGames() {
             TestUtil.appFactory.gameService.list().map {
                 TestUtil.appFactory.gameService.delete(it.id)
@@ -162,6 +166,7 @@ class SelectionTest : BaseWeekTest() {
         fun cleanUp() {
             deleteGames()
             deleteUserWeeks()
+            toggleWeekSubmit(1, false)
         }
     }
 
@@ -189,8 +194,7 @@ class SelectionTest : BaseWeekTest() {
 
     @Test
     fun userMakesSelection() {
-        deleteUserWeeks()
-        val expectedSelection = selectionIds[3]
+        val expectedSelection = selectionIds[2]
         val response = client(
                 makeSelectionLens(
                         MakeSelection(expectedSelection),
@@ -332,9 +336,45 @@ class SelectionTest : BaseWeekTest() {
         )
     }
 
+    @Test
+    fun userCanDeleteSelection() {
+        val expectedSelection = selectionIds[3]
+        val selectionId = idLens(client(
+                makeSelectionLens(
+                        MakeSelection(expectedSelection),
+                        SecureRequest(Method.POST, "$selectionsUrl/1", userToken)
+                )
+        )).id
 
-//    @Test
-//    fun doNotAllowDuplicatePosts() {
-//
-//    }
+        val userSelections = userWeekSelectionsLens(
+                client(SecureRequest(Method.GET, "$selectionsUrl/1", userToken))
+        ).userSelections
+
+        val expectedSelectionCount = userSelections.size - 1
+
+        val response = client(SecureRequest(Method.DELETE, "$selectionsUrl/1/$selectionId", userToken))
+        assertEquals(
+                expected = Status.OK,
+                actual = response.status
+        )
+
+        assertEquals(
+                expected = expectedSelectionCount,
+                actual = userWeekSelectionsLens(
+                        client(SecureRequest(Method.GET, "$selectionsUrl/1", userToken))
+                ).userSelections.size
+        )
+    }
+
+    @Test
+    fun userCannotDeleteSelectionForSubmittedWeek() {
+        resetWeeks()
+        setReadyCurrentWeek(1)
+        toggleWeekSubmit(1, true)
+        val response = client(SecureRequest(Method.DELETE, "$selectionsUrl/1/${selectionIds.first()}", userToken))
+        assertEquals(
+                expected = Status.BAD_REQUEST,
+                actual = response.status
+        )
+    }
 }
