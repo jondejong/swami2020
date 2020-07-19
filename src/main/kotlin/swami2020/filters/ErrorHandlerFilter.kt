@@ -1,6 +1,7 @@
 package swami2020.filters
 
 import org.http4k.core.*
+import swami2020.exception.IllegalDataStateException
 import swami2020.exception.ItemNotFoundException
 import swami2020.exception.UnauthenticatedException
 
@@ -13,6 +14,8 @@ object ErrorHandlerFilter {
             } catch (e: ItemNotFoundException) {
                 response = Response(Status.NOT_FOUND)
             } catch (e: IllegalArgumentException) {
+                response = Response(Status.BAD_REQUEST)
+            } catch (e: IllegalDataStateException) {
                 response = Response(Status.BAD_REQUEST)
             } catch (e: UnauthenticatedException) {
                 response = Response(Status.UNAUTHORIZED)
